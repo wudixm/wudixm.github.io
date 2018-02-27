@@ -106,3 +106,18 @@ Test.java:41: 错误: 对于add(String), 找不到合适的方法
 
 这样的错误消息显然还无法令人满意，但是编译器已经尽到了它的职责，防止你破坏集合的类型约束条件。**你不仅无法将任何元素（除了null 之外）放进Collection\<?\> 中，而且根本无法猜测你会得到哪种类型的对象。**要是无法接受这些限制，就可以使用泛型方法（generic method，见第27条）或者有限制的通配符类型（bounded wildcard type 见第28条）
 
+不要在新代码中使用原生态类型，这条规则有两个小小的例外，**两者都源于“泛型信息可以在运行时被擦除（见第25条）”这一事实。在类文字(class literal) 中必须使用原生态类型。**规范不允许使用参数化类型。换句话说，List.class，String[].class 和int.class 都是合法的，但是List\<String\>.class 和List\<?\>.class 则不合法。
+
+这条规则的第二个例外与instanceof 操作符有关。**由于泛型信息可以在运行时被擦除，因此在参数化类型而非无限制通配符类型上使用instanceof 操作符是非法的。用无限制通配符类型代替原生态类型，对instanceof 操作符的行为不会产生任何影响。**
+
+```java
+if (o instanceof Set<?>) {//正确
+}
+if (o instanceof Set) {//正确
+    Set<?> m = (Set<?>) o;
+}
+// 下面这个抛出异常，Error:(45, 21) java: instanceof 的泛型类型不合法
+//if (o instanceof Set<String>) {
+//}
+```
+
