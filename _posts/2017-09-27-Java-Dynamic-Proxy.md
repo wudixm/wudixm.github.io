@@ -62,3 +62,140 @@ feature_image: "https://picsum.photos/2560/600?image=872"
   - **Bootstrap ClassLoader：**此加载器采用C++编写，一般开发中是看不到的
   - **Extension ClassLoader：**用来进行扩展类的加载，一般对应的是jre\lib\ext目录中的类
   - **App ClassLoader**：（默认）加载classpath指定的类，是最常使用的一种加载器
+
+### Proxy.newInstance() 
+
+```
+public static Object newProxyInstance(ClassLoader loader,
+                                      Class<?>[] interfaces,
+                                      InvocationHandler h)
+                               throws IllegalArgumentException
+```
+
+返回一个指定接口的代理类实例，该接口可以将方法调用指派到指定的调用处理程序。此方法相当于：     Proxy.getProxyClass(loader, interfaces).
+​         getConstructor(new Class[] { InvocationHandler.class }).
+​         newInstance(new Object[] { handler });
+ Proxy.newProxyInstance 抛出 IllegalArgumentException，原因与 Proxy.getProxyClass 相同。
+
+- 参数：
+  - loader - 定义代理类的类加载器
+  - interfaces - 代理类要实现的接口列表
+  - h - 指派方法调用的调用处理程序
+- 返回：
+  - 一个带有代理类的指定调用处理程序的代理实例，它由指定的类加载器定义，并实现指定的接口
+- 抛出：
+  - IllegalArgumentException - 如果违反传递到 getProxyClass 的参数上的任何限制
+  - NullPointerException - 如果 interfaces 数组参数或其任何元素为 null，或如果调用处理程序 h 为 null
+
+### invoke
+
+```
+Object invoke(Object proxy,
+              Method method,
+              Object[] args)
+              throws Throwable
+```
+
+- **参数：**
+
+  `proxy` - 在其上调用方法的代理实例
+
+  如果在InvocationHandler 中有如下代码：
+
+  ```java
+  // 无限循环，直到栈溢出
+  @Override
+  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+      System.out.println("before");
+      Object invoke = method.invoke(proxy, args); // 这一步出错，不能在proxy 对象上再调用method.invoke()方法，会再进到这个invoke 方法中，导致会一直打印before，直到栈溢出
+      System.out.println("after"); // 这一打印执行不到
+      return invoke;
+  }
+  ```
+
+  `method` - 对应于在代理实例上调用的接口方法的 `Method` 实例。`Method` 对象的声明类将是在其中声明方法的接口，该接口可以是代理类赖以继承方法的代理接口的超接口。
+
+  `args` - 包含传入代理实例上方法调用的参数值的对象数组，如果接口方法不使用参数，则为 `null`。基本类型的参数被包装在适当基本包装器类（如 `java.lang.Integer` 或 `java.lang.Boolean`）的实例中。
+
+- **返回：**
+
+  从代理实例的方法调用返回的值。如果接口方法的声明返回类型是基本类型，则此方法返回的值一定是相应基本包装对象类的实例；否则，它一定是可分配到声明返回类型的类型。如果此方法返回的值为 `null` 并且接口方法的返回类型是基本类型，则代理实例上的方法调用将抛出 `NullPointerException`。否则，如果此方法返回的值与上述接口方法的声明返回类型不兼容，则代理实例上的方法调用将抛出 `ClassCastException`。
+
+- **抛出：**
+
+  `Throwable` - 从代理实例上的方法调用抛出的异常。该异常的类型必须可以分配到在接口方法的 `throws` 子句中声明的任一异常类型或未经检查的异常类型 `java.lang.RuntimeException` 或 `java.lang.Error`。如果此方法抛出经过检查的异常，该异常不可分配到在接口方法的 `throws` 子句中声明的任一异常类型，代理实例的方法调用将抛出包含此方法曾抛出的异常的 [`UndeclaredThrowableException`](../../../java/lang/reflect/UndeclaredThrowableException.html)。
+
+- **另请参见：**
+
+  [`UndeclaredThrowableException`](../../../java/lang/reflect/UndeclaredThrowableException.html)
+
+### 例子
+
+```java
+// AIntf.java
+public interface AIntf {
+    void soutA();
+}
+
+// BIntf.java
+public interface BIntf {
+    void soutB();
+}
+
+// Processor.java
+public class Processor implements AIntf,BIntf{
+    @Override
+    public void soutA() {
+        System.out.println("processor a ");
+    }
+
+    @Override
+    public void soutB() {
+        System.out.println("processor b ");
+    }
+}
+
+// MyHandler.java
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+public class MyHandler implements InvocationHandler {
+    private Processor processor;
+
+    public MyHandler(Processor processor) {
+        this.processor = processor;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("before");
+        Object invoke = method.invoke(proxy, args);
+        System.out.println("after");
+        return invoke;
+    }
+}
+
+// Test.java
+package DesignPattern.ProxyPattern.WorkProblem;
+
+import java.lang.reflect.Proxy;
+
+public class Test {
+    public static void main(String[] args) {
+        ClassLoader classLoader = Processor.class.getClassLoader();
+        Class<?>[] interfaces = Processor.class.getInterfaces();
+
+        Processor p = new Processor();
+        BIntf a = (BIntf) Proxy.newProxyInstance(classLoader, interfaces, new MyHandler(p));
+        a.soutB();
+        // 正确
+        
+        // AIntf a = (BIntf) Proxy.newProxyInstance(classLoader, interfaces, new MyHandler(p));
+        // a.soutA();
+        // 也是正确的
+
+    }
+}
+
+```
+

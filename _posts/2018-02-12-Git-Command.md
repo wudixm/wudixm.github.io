@@ -29,6 +29,14 @@ feature_image: "https://picsum.photos/2560/600?image=872"
 
 `git diff —cached`：显示暂存区和上一个commit的差异，gdca
 
+
+`git diff —cached`：gdca
+
+git describe --tags \`git rev-list --tags --max-count=1\` : gdct
+
+`git diff --cached --word-diff`：gdcw
+`git diff --word-diff`：gdw
+
 `git fetch [remote]`：下载远程仓库的所有变动，gf
 
 `git help`：帮助，ghh
@@ -56,3 +64,4 @@ feature_image: "https://picsum.photos/2560/600?image=872"
 `git show —name-only [commit]`：显示某次提交发生变化的文件
 
 `git show [commit]:[filename]`：显示某次提交时，某个文件的内容
+
