@@ -2,7 +2,7 @@
 title: Git 基础命令
 excerpt: |
   Git 基础命令
-category: Git
+category: Linux
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ### Git 常用命令，后面的命令是alias
