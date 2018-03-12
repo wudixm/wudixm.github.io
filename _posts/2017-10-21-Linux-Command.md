@@ -155,3 +155,30 @@ ps ax | grep get
 例如：
 
 `$ wc - lcw file1 file24 33 file17 52 file211 11 85 total`
+
+### 免密码
+
+Before using Git add your key to **ssh-agent**
+
+Start **ssh-agent** if not started:
+
+> $ eval ``ssh-agent -s``
+
+Add your **private key** using **ssh-add**
+
+> $ ssh-add ~/.ssh/id_rsa_key
+> Enter passphrase for /home/user/.ssh/id_rsa_key:
+> Identity added: /home/user/.ssh/id_rsa_key
+> (/home/user/.ssh/id_rsa_key)
+
+Check if the key is added (parameter is a lowercase L):
+
+> $ ssh-add -l
+> 2048 55:96:1a:b1:31:f6:f0:6f:d8:a7:49:1a:e5:4c:94:6f
+> /home/user/.ssh/id_rsa_key (RSA)
+
+Try to connect to your Git server:
+
+> $ ssh git.example.com
+
+Now you can use Git without extra passphrase prompts.

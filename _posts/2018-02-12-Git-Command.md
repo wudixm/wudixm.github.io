@@ -7,6 +7,17 @@ feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ### Git 常用命令，后面的命令是alias
 
+`git config --global user.name "xxx"`：初始化用户名
+
+`git config --global user.email "xxx@gmail.com"`：初始化邮箱
+
+`git config --list`：查看当前所有的git 配置信息
+
+#### Need Help？
+
+- `git help <verb>`
+- `git <verb> --help`
+
 `git add`：添加文件到本地缓存区，ga
 
 `git add -a`：添加所有文件到本地缓存区，gaa
