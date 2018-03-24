@@ -182,3 +182,18 @@ Try to connect to your Git server:
 > $ ssh git.example.com
 
 Now you can use Git without extra passphrase prompts.
+
+### 查看端口占用
+
+Mac下使用lsof（list open files）来查看端口占用情况，lsof 是一个列出当前系统打开文件的工具。
+
+使用 lsof 会列举所有占用的端口列表：
+
+使用less可以用于分页展示，如：
+
+ 
+
+也可以使用 -i 查看某个端口是否被占用，如：
+
+如果端口被占用，则会返回相关信息，如果没被占用，则不返回任何信息
+
