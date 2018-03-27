@@ -117,7 +117,7 @@ if (o instanceof Set) {//正确
     Set<?> m = (Set<?>) o;
 }
 // 下面这个抛出异常，Error:(45, 21) java: instanceof 的泛型类型不合法
-//if (o instanceof Set<String>) {
+//if (o instancegvvvvvvvvvvvvvvvvvvvvvvvhof Set<String>) {
 //}
 ```
 
