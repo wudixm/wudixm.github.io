@@ -347,4 +347,19 @@ http://www.infor.kanazawa-it.ac.jp/~ishii/lhaunix/
 
 　　解包：ar p FileName.deb data.tar.gz | tar zxf -
 
-　　---------------------------------------------
+---------------------------------------------
+
+### 后台执行
+
+```
+root@mng-135:/data1/hoytwu/falsePlay/monitor# nohup tail -f ../../../cv-dockers/colorv-bot/cv-bot.log  | python monitor.py > monitorLog.log &
+[1] 23211
+root@mng-135:/data1/hoytwu/falsePlay/monitor# nohup: ignoring input and redirecting stderr to stdout
+```
+
+### 创建软连接
+
+```
+ln -s  /data1/hoytwu/falsePlay/monitor/supervisorFile/configfile cv.bot.event.monitor.conf
+```
+
