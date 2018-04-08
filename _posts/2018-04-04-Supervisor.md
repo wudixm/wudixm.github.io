@@ -13,7 +13,7 @@ app:app_task_02                          STOPPED   Feb 26 02:22 PM
 audio_hot_word                           RUNNING   pid 49129, uptime 1:08:45
 bot_log_collector                        RUNNING   pid 30009, uptime 1:41:23
 bot_log_video                            RUNNING   pid 47652, uptime 1 day,
-。。。
+
 
 root@mng-68:~# ls -l /etc/supervisor/conf.d/  // 在68 环境此目录下，有软件连接或实际的配置文件
 total 4
