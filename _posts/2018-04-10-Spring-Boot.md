@@ -1,5 +1,6 @@
 ### Spring @RequestParam 与@RequestBody
 
+
 ```java
 http://localhost:8000/userstatelog/?test=5
 http://localhost:8000/userstatelog/?test=1
@@ -23,17 +24,15 @@ public UserCounter getUserByID(@RequestBody Map<String, Object> reqMap) throws E
 
 - 如果是RequestBody 一定要在**http 请求体**中加上内容，利用PostMan 或者其它Http 工具进行测试，所以应该是一定要POST 请求才可以(GET 无请求体)
 
-{
+# Spring的Java配置方式
 
-    "2018-04-10": {
-        "StateVO{activeStatus='NEW', interStatus='INTERACTION', worksStatus='NO_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 37,
-        "StateVO{activeStatus='NEW', interStatus='NO_INTERACTION', worksStatus='NO_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 5790,
-        "StateVO{activeStatus='NEW', interStatus='INTERACTION', worksStatus='WITH_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 17,
-        "StateVO{activeStatus='NEW', interStatus='NO_INTERACTION', worksStatus='WITH_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 476
-    }
-    
-        "2018-04-10": {
-            "StateVO{activeStatus='NEW', interStatus='INTERACTION', worksStatus='NO_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 37,
-            "StateVO{activeStatus='NEW', interStatus='NO_INTERACTION', worksStatus='NO_WORKS', watchLiveStatus='NO_WATCH_LIVE'}": 5744
-        }
-}
+Java配置是Spring4.x推荐的配置方式，可以完全替代xml配置。
+
+## @Configuration和 @Bean
+
+Spring的Java配置方式是通过@Configuration 和 @Bean这两个注解实现的：
+
+1、@Configuration作用于类上，相当于一个xml配置文件；
+
+2、@Bean作用于方法上，相当于xml配置中的<bean>；
+
