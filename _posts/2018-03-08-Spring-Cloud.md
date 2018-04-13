@@ -314,3 +314,53 @@ public class Application {
 }
 ```
 
+### 遇到问题
+
+2018-04-13 日注入不了bean，原因是利用简单工厂，不能在返回的时候new 一个对象，需要提前把对象利用自动装配装配到工厂类里面，如下：
+
+```
+package com.colorv.bot.user.state.log.dao;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class StateLoggerFactory {
+
+    private UserStateDayLoggerDao userStateDayLoggerDao;
+    private UserStateWeekLoggerDao userStateWeekLoggerDao;
+    private UserStateMonthLoggerDao userStateMonthLoggerDao;
+
+    @Autowired
+    public void setUserStateDayLoggerDao(UserStateDayLoggerDao userStateDayLoggerDao) {
+        this.userStateDayLoggerDao = userStateDayLoggerDao;
+    }
+
+    @Autowired
+    public void setUserStateWeekLoggerDao(UserStateWeekLoggerDao userStateWeekLoggerDao) {
+        this.userStateWeekLoggerDao = userStateWeekLoggerDao;
+    }
+
+    @Autowired
+    public void setUserStateMonthLoggerDao(UserStateMonthLoggerDao userStateMonthLoggerDao) {
+        this.userStateMonthLoggerDao = userStateMonthLoggerDao;
+    }
+
+    public UserStateLoggerIntf getStateLogger(String type) {
+        switch (type) {
+            case "d":
+                return this.userStateDayLoggerDao; // 不能是 return new User..(), new 的话新的Dao 对象里面装配的东西肯定是没有装配上的
+            case "w":
+                return this.userStateWeekLoggerDao;
+            case "m":
+                return this.userStateMonthLoggerDao;
+            default:
+                return null;
+        }
+
+    }
+}
+
+```
+
