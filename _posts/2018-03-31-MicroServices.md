@@ -45,3 +45,17 @@ In fact, SOA and micro service share many similar methodologies in developing ap
 3. **There can be much faster user acceptance testing.** Every microservice can be tested quickly to check for validity and consistency where as previous monolithic systems require the entire system to be ready in order to test for consistency in systems logic
 4. **Application development cycle can be shortened to the use of mocroservices.** this is because each micro service function is independent of one another and that it operates and deploys on its own.
 5. Allows the business to align very quickly to the use of micro service to respond to the industry  customer needs and demands.
+
+## Article
+
+[click here](https://dzone.com/articles/java-microservices-code-examples-tutorials-and-more)
+
+## What Are Microservices?
+
+Microservices are a form of service-oriented architecture style (one of the most [important skills for Java developers](https://stackify.com/great-java-developer-skills/)) wherein applications are built as a collection of different smaller services rather than one whole app. Instead of a monolithic app, you have several independent applications that can run on their own and may be created using different coding or programming languages. Big and complicated applications can be made up of simpler and independent programs that are executable by themselves. These smaller programs are grouped together to deliver all the functionalities of the big, monolithic app.
+
+Microservices captures your business scenario, answering the question “*What problem are you trying to solve*?” It is usually developed by an engineering team with only a few members and can be written in any programming language as well as utilize any framework. Each of the involved programs is independently versioned, executed, and scaled. These microservices can interact with other microservices and can have unique URLs or names while being always available and consistent even when failures are experienced.
+
+## What Are the Benefits of Microservices?
+
+There are several benefits to using microservices. For one, because these smaller applications are not dependent on the same coding language, the developers can use the programming language that they are most familiar with. That helps developers come up with a program faster with lower costs and fewer bugs. The agility and low costs can also come from being able to reuse these smaller programs on other projects, making it more efficient.
