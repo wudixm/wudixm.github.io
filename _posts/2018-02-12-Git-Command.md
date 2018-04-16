@@ -54,6 +54,22 @@ git describe --tags \`git rev-list --tags --max-count=1\` : gdct
 
 `git log —stat`：显示commit历史，以及每次commit发生变更的文件，glg
 
+`git log --oneline`：按照一行，缩减形式显示日志
+
+```
+627a75e (HEAD -> master) update spring boot and test amend finished
+7353640 udpate celery
+1e0b818 update spring cloud not able to insert bean because of static factory method
+2b460db add @RequestParam and @RequestBody differences
+f13fa01 update
+3bb15a9 update
+8481c34 update
+```
+
+`git log --oneline --decorate`：一行显示日志  glo
+
+`git commit --amend -m "Welcome To Facebook"`
+
 `git merge [branch]`：合并指定分支到当前分支，gm [branch]
 
 `git push [remote] [branch]`：上传本地指定分支到远程仓库，gp 
