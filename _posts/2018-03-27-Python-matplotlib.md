@@ -1,3 +1,10 @@
+---
+title: Python matplotlib
+excerpt: |
+  Python matplotlib
+category: Python
+feature_image: "https://picsum.photos/2560/600?image=872"
+---
 ### matplotlib
 
 ```

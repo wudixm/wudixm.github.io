@@ -1,3 +1,10 @@
+---
+title: Java Tree Map
+excerpt: |
+  Java Tree Map
+category: Java 基础
+feature_image: "https://picsum.photos/2560/600?image=872"
+---
 ### Java TreeMap 的方法，floorKey, celingKey, higherKey, lowerKey
 
 ```
