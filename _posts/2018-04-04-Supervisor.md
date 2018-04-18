@@ -15,7 +15,7 @@ bot_log_collector                        RUNNING   pid 30009, uptime 1:41:23
 bot_log_video                            RUNNING   pid 47652, uptime 1 day,
 
 
-root@mng-68:~# ls -l /etc/supervisor/conf.d/  // 在68 环境此目录下，有软件连接或实际的配置文件
+root@mng-68:~# ls -l /etc/supervisor/conf.d/  // 在68 环境此目录下，有软连接或实际的配置文件
 total 4
 lrwxrwxrwx 1 root root  48 Jan  4 10:53 cv.app.robot.conf -> /www/confcv/colorv/supervisors/cv.app.robot.conf
 lrwxrwxrwx 1 root root  47 Jan  8 17:44 cv.app.task.conf -> /www/confcv/colorv/supervisors/cv.app.task.conf
