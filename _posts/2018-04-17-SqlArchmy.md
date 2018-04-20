@@ -18,5 +18,15 @@ stmt = tbl.select()
         stmt = stmt.offset(offset)
 
 stmt = tbl.select().order_by(tbl.c.id.desc()).where(and_(tbl.c.channel_id == channel_id,tbl.c.is_show == 1))
+
+
+
+stmt = tbl.select(**tbl.c.user_id**).where(tbl.c.created_at > (datetime.datetime.now() - datetime.timedelta(int(d))))
+
+
+stmt = stmt.where(sqlalchemy.or_(
+                tbl.c.category_id.in_(cat_ids),
+                tbl.c.kind != 'video'
+            ))
 ```
 

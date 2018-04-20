@@ -397,3 +397,20 @@ git push origin master
 deleting
 ```
 
+### 查看远程仓库
+
+`git remote -v`
+
+### Discard all local changes in your working directory
+
+`git reset --hard HEAD`
+
+### force pull
+
+```
+git fetch --all
+git reset --hard origin/master
+git pull origin master
+git pull
+```
+
