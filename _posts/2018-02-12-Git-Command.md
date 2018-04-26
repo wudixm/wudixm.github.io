@@ -92,6 +92,8 @@ f13fa01 update
 
 `git show [commit]:[filename]`：显示某次提交时，某个文件的内容
 
+`git remote show origin`：显示版本显示
+
 ### 视频教程
 
 原文：[Git Tutorial for Beginners: Command-Line Fundamentals](https://www.youtube.com/watch?v=HVsySz-h9r4)
