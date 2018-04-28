@@ -377,3 +377,43 @@ root@mng-135:/data1/hoytwu/falsePlay/monitor# nohup: ignoring input and redirect
 ln -s  /data1/hoytwu/falsePlay/monitor/supervisorFile/configfile cv.bot.event.monitor.conf
 ```
 
+### alias
+
+```
+我们在使用Linux中使用较长的命令而且要经常要使用时，总是会使用别名，这里就简单的介绍一下别名alias
+
+指令：alias
+设置指令的别名
+
+语法：#  alias name='command line'
+
+参数：
+-p：    打印出现有的别名（唯一的参数）
+若不加任何参数，则列出目前所有的别名设置
+
+用法：
+# alias cp='cp -i'
+这样就可以用cp来代替cp -i，而且cp -i这条命令依旧有效
+
+查看alias：
+列出目前所有的别名设置。
+# alias    或    # alias -p
+
+查看具体一条指令的别名
+# alias cp
+
+别名永久化：
+alias的作用仅在该次登入的操作，即输入一次alias后，这个修改只在当前的Shell生效。如果重新开启一个 Shell，或者重新登录，则这些alias将无法使用。好在linux中提供alias永久化的方法：
+<1>.若要每次登入就自动生效别名，则把别名加在/etc/profile或~/.bashrc中。然后# source ~/.bashrc
+<2>.若要让每一位用户都生效别名，则把别名加在/etc/bashrc最后面，然后# source /etc/bashrc
+
+重新设置别名：
+alias重置的方法与第一次设置的时候一样
+# alias cp='cp -i'
+
+删除别名：
+格式：unalias name
+
+#  unalias cp
+```
+

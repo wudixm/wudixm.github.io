@@ -416,3 +416,41 @@ git pull origin master
 git pull
 ```
 
+### list
+
+```
+➜  _posts git:(master) ✗ git ls-files -d
+➜  _posts git:(master) ✗ git ls-files -m
+2017-10-21-Linux-Command.md
+➜  _posts git:(master) ✗ gst
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   2017-10-21-Linux-Command.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+OPTIONS
+       -c, --cached
+           Show cached files in the output (default)
+
+       -d, --deleted
+           Show deleted files in the output
+
+       -m, --modified
+           Show modified files in the output
+
+       -o, --others
+           Show other (i.e. untracked) files in the output
+
+       -i, --ignored
+           Show only ignored files in the output. When showing files in the index, print only those matched by an exclude pattern. When showing "other" files,
+           show only those matched by an exclude pattern.
+:
+```
+
