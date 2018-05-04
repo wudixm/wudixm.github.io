@@ -1,4 +1,4 @@
-Sharing - Mongo Shell
+### Sharing - Mongo Shell
 
 ```
 https://www.youtube.com/watch?v=pWbMrx5rVBE
@@ -229,7 +229,7 @@ db.cv_videos.find({"video_id":98350028}).pretty()
 > db.cv_videos.find({"categories":{$type:"string"}}).forEach(function(data){db.cv_videos.update({_id:data._id},{$set:{"categories":[parseInt(data.categories)]}})})
 ```
 
-pymongo
+### pymongo
 
 ```
 client = MongoClient('mongodb://10.25.172.135:27017/')
@@ -264,9 +264,26 @@ if __name__ == '__main__':
 
 ```
 
-mongo java
+### mongo java
 
-```
+```java
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
+public class MongoDBJDBC{
+   public static void main( String args[] ){
+      try{   
+       // 连接到 mongodb 服务
+         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+       
+         // 连接到数据库
+         MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");  
+       System.out.println("Connect to database successfully");
+        
+      }catch(Exception e){
+        System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+     }
+   }
+}
 ```
 
