@@ -479,3 +479,76 @@ find    /   -user    fred     #查找在系统中属于FRED这个用户的文件
 查当前目录下的所有普通文件，并在- e x e c选项中使用ls -l命令将它们列出
 ```
 
+### gzip
+
+```
+gzip 是linux中常见的压缩/解压工具，最常见的使用对象是*.gz格式的文件，这里简单介绍下它最常见的用法，
+
+GZIP(1) General Commands Manual GZIP(1)
+
+NAME
+     gzip, gunzip, zcat - compress or expand files
+
+SYNOPSIS
+     gzip [ -acdfhklLnNrtvV19 ] [--rsyncable] [-S suffix] [ name ... ]
+     gunzip [ -acfhklLnNrtvV ] [-S suffix] [ name ... ]
+     zcat [ -fhLV ] [ name ... ]
+
+OPTIONS
+     -c --stdout --to-stdout 结果写到标准输出，原文件保持不变
+     -d --decompress --uncompress 解压
+     -k --keep 压缩或者解压过程中，保留原文件
+     -r --recursive
+     -t --test 检查压缩文件的完整性
+     -v --verbose 显示每个文件的名子和压缩率
+     -# --fast --best 取值从-1(最快)到-9(最好)，默认是-6
+
+示例1，压缩文件
+原文件名为file1.txt，压缩后原文件消失，压缩后文件名为file1.txt.gz
+root@ubuntu:/tmp# ls -l file1.*
+-rw-r--r-- 1 root root 12383865 Aug 21 08:08 file1.txt
+root@ubuntu:/tmp# gzip file1.txt
+root@ubuntu:/tmp# ls -l file1.*
+-rw-r--r-- 1 root root 134416 Aug 21 08:08 file1.txt.gz
+
+示例2，解压文件
+root@ubuntu:/tmp# gzip -d file1.txt.gz
+root@ubuntu:/tmp# ls -lh file1.*
+-rw-r--r-- 1 root root 12M Aug 21 08:08 file1.txt
+
+示例3，压缩的时候，显示压缩率
+root@ubuntu:/tmp# gzip -v file1.txt
+file1.txt: 98.9% -- replaced with file1.txt.gz
+
+示例4，一条命令压缩多个文件，压缩之后，是各自分开的：
+root@ubuntu:/tmp# gzip file1.txt file2.txt
+root@ubuntu:/tmp# ls -l
+total 1348
+-rw-r--r-- 1 root root 134416 Aug 21 08:08 file1.txt.gz
+-rw-r--r-- 1 root root 392 Aug 21 08:15 file2.txt.gz
+
+示例5，压缩过程中，保留原文件
+root@ubuntu:/tmp# gzip -k file1.txt
+root@ubuntu:/tmp# ls file1.*
+file1.txt file1.txt.gz
+
+示例6，压缩到标准输出中
+可以连接两个文件
+root@ubuntu:/tmp# cat file1.txt file2.txt | gzip > foo.gz
+或者
+root@ubuntu:/tmp# gzip -c file1.txt file2.txt > foo.gz
+
+```
+
+### 分文件压缩
+
+```
+假设当前目录下有proc目录。
+
+tar -czf - proc | split -b 2m -d - proc.tar.gz #分卷压缩proc目录，并保持每个压缩包的大小不超过2m字节。命令执行后，会生成proc.tar.gz00、proc.tar.gz01等文件
+
+cat proc.tar.gz* | tar -xzf - #将各个分卷压缩包解压到当前目录
+
+cat proc.tar.gz* > proc.tar.gz #将各个分卷压缩包合成为一个proc.tar.gz文件
+```
+
