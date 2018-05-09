@@ -685,3 +685,24 @@ Ctrl+b :list-commands
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ```
 
+### rsync
+
+```
+rsync -r dir1/ dir2
+The -r option means recursive, which is necessary for directory syncing.
+
+rsync -a dir1/ dir2
+The -a option is a combination flag. It stands for "archive" and syncs recursively and preserves symbolic links, special and device files, modification times, group, owner, and permissions. It is more commonly used than -r and is usually what you want to use.
+
+
+Always double-check your arguments before executing an rsync command. Rsync provides a method for doing this by passing the -n or --dry-run options. The -v flag (for verbose) is also necessary to get the appropriate output:
+rsync -anv dir1/ dir2
+
+
+rsync -a ~/dir1 username@remote_host:destination_directory
+rsync -a username@remote_host:/home/username/dir1 place_to_sync_on_local_machine
+
+
+
+```
+
