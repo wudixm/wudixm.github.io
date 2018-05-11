@@ -190,7 +190,7 @@ Now you can use Git without extra passphrase prompts.
 SSH_AUTH_SOCK=/var/folders/dn/sk1cwjps05b5j7dlgk16bcwm0000gn/T//ssh-B49vYHRkU2pj/agent.836; export SSH_AUTH_SOCK;
 SSH_AGENT_PID=837; export SSH_AGENT_PID;
 echo Agent pid 837;
-➜  ~ ssh-add .ssh/id_rsa
+➜  ~ ssh-add .ssh/id_rsa    ## 这个是正在用的
 Enter passphrase for .ssh/id_rsa: hoytwu
 Identity added: .ssh/id_rsa (.ssh/id_rsa)
 ```
