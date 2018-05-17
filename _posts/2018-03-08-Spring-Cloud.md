@@ -364,3 +364,6 @@ public class StateLoggerFactory {
 
 ```
 
+### 启动Spring Boot
+
+要把AppServer.java 文件放到至少一层目录下，不能直接在src/main/java 目录下。

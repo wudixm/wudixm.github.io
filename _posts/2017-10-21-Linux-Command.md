@@ -704,6 +704,9 @@ rsync -a username@remote_host:/home/username/dir1 place_to_sync_on_local_machine
 
 rsync -azvP username@remote_host:/home/username/dir1 place_to_sync_on_local_machine
 
+
+rsync -azvP root@115.28.220.221:/data2/dmgr/target/* .
+
 ```
 
 ### df
