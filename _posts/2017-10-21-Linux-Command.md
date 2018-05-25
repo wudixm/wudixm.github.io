@@ -809,3 +809,40 @@ du|sort -nr|more
 说明：
 ```
 
+### split 分文件
+
+```
+用shell切分文件--split
+
+有个文件要处理，因为很大，所以想把它切成若干份，每份N行，以便并行处理。怎么搞呢？查了下强大的shell，果然有现成的工具--split。
+下面记录下基本用法：
+
+[plain] view plain copy
+split [-bl] file [prefix]  
+
+参数说明：
+-b, --bytes=SIZE：对file进行切分，每个小文件大小为SIZE。可以指定单位b,k,m。
+-l, --lines=NUMBER：对file进行切分，每个文件有NUMBER行。
+prefix：分割后产生的文件名前缀。
+
+示例：
+
+假设要切分的文件为test.2012-08-16_17，大小1.2M，12081行。
+
+[plain] view plain copy
+split -l 5000 test.2012-08-16_17  
+生成xaa，xab，xac三个文件。
+wc -l 看到三个文件行数如下：
+5000 xaa
+5000 xab
+2081 xac
+12081 总计
+```
+
+### whereis 
+
+```
+colorv@rd-qiniu-1:/data1/transform_data/multith/athread$ whereis upload-qn
+upload-qn: /usr/local/bin/upload-qn
+```
+
