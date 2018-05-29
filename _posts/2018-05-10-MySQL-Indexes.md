@@ -54,6 +54,12 @@ CREATE UNIQUE INDEX index_name ON table_name (column_list)
 
 table_name、index_name和column_list具有与ALTER TABLE语句中相同的含义，索引名不可选。另外，不能用CREATE INDEX语句创建PRIMARY KEY索引。
 
+```
+DROP INDEX cv_scene_favorites_user_id_scene_id ON cv_scene_favorites_v2
+
+CREATE UNIQUE INDEX cv_scene_favorites_user_id_scene_id ON cv_scene_favorites_v2 (`user_id`,`scene_id`)
+```
+
 #### 3．索引类型
 
 在创建索引时，可以规定索引能否包含重复值。如果不包含，则索引应该创建为PRIMARY KEY或UNIQUE索引。对于单列惟一性索引，这保证单列不包含重复的值。对于多列惟一性索引，保证多个值的组合不重复。
