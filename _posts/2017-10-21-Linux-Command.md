@@ -846,3 +846,20 @@ colorv@rd-qiniu-1:/data1/transform_data/multith/athread$ whereis upload-qn
 upload-qn: /usr/local/bin/upload-qn
 ```
 
+### nc
+
+```
+用nc命令操作memcached
+1）存储数据：printf “set key 0 10 6rnresultrn” |nc 192.168.2.34 11211
+2）获取数据：printf “get keyrn” |nc 192.168.2.34 11211
+3）删除数据：printf “delete keyrn” |nc 192.168.2.34 11211
+4）查看状态：printf “statsrn” |nc 192.168.2.34 11211
+5）模拟top命令查看状态：watch “echo stats” |nc 192.168.2.34 11211
+6）清空缓存：printf “flush_allrn” |nc 192.168.2.34 11211 (小心操作，清空了缓存就没了）
+printf 可以改为echo
+
+echo 'delete GroupMembers#3290514#10325' | nc 127.0.0.1 11213
+```
+
+
+
