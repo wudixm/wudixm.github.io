@@ -148,4 +148,58 @@ app.datasource.maximum-pool-size=30
 
 See “[Section 29.1, “Configure a DataSource”](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-sql.html#boot-features-configure-datasource)” in the “Spring Boot features” section and the [`DataSourceAutoConfiguration`](https://github.com/spring-projects/spring-boot/tree/v2.0.2.RELEASE/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/jdbc/DataSourceAutoConfiguration.java) class for more details.
 
-## 
+## Spring @ControllerAdvice Exception Handle
+
+[原文](http://www.baeldung.com/exception-handling-for-rest-with-spring)
+
+### Solution 1 – The Controller level @ExceptionHandler
+
+The first solution works at the *@Controller* level – we will define a method to handle exceptions, and annotate that with *@ExceptionHandler*:
+
+```java
+public class FooController{
+     
+    //...
+    @ExceptionHandler({ CustomException1.class, CustomException2.class })
+    public void handleException() {
+        //
+    }
+}
+```
+
+This approach has **a major drawback** – the *@ExceptionHandler* annotated method is **only active for that particular Controller**, not globally for the entire application. Of course adding this to every controller makes it not well suited for a general exception handling mechanism.
+
+### New Solution 3 – The New @ControllerAdvice (Spring 3.2 And Above)
+
+**Spring 3.2** brings support for a global *@ExceptionHandler *with the new *@ControllerAdvice* annotation. This enables a mechanism that breaks away from the older MVC model and makes use of *ResponseEntity*along with the type safety and flexibility of *@ExceptionHandler*:
+
+```java
+@ControllerAdvice
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+ 
+    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
+    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "This should be application specific";
+        return handleExceptionInternal(ex, bodyOfResponse, 
+          new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+}
+```
+
+The new annotation allows the multiple scattered *@ExceptionHandler* from before to be consolidated into a **single, global error handling component**.
+
+The actual mechanism is extremely simple but also very flexible:
+
+- it allows full control over the body of the response as well as the status code
+- it allows mapping of several exceptions to the same method, to be handled together
+- it makes good use of the newer RESTful *ResposeEntity* response**
+
+One thing to keep in mind here is to **match the exceptions declared with @ExceptionHandler with the exception used as the argument of the method**. If these don’t match, the compiler will not complain – no reason it should, and Spring will not complain either.
+
+However, when the exception is actually thrown at runtime, **the exception resolving mechanism will fail with**:
+
+```
+java.lang.IllegalStateException: No suitable resolver for argument [0] [type=...]
+HandlerMethod details: ...
+```
+
