@@ -8,3 +8,14 @@ mysql>
 
 ```
 
+### update
+
+```
+update A, B  set A.mc = B.mc where A.bmbh = B.bmbh and A.xmbh = B.xmbh;
+```
+
+或
+
+```
+update A INNER JOIN B ON A.bmbh = B.bmbh AND A.xmbh = B.xmbh SET A.mc = B.mc;
+```
