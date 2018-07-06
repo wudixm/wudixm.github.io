@@ -428,6 +428,18 @@ grep -A 5 foo file 显示foo及后5行
 grep -V
 
 假设想升级，升级的方法：最新的源代码（google或者百度搜索主页），编译安装到某个地方，比方 /home/aaa/bin/ 那么以后用的时候就用 /home/aaa/bin/grep ，或者把 /home/aaa/bin 加到PATH环境变量就可以。 假设你把最新编译好的grep覆盖到你如今grep所在文件夹，则升级自然就完成了
+
+
+不包含字符串用 -v，如不包含gz 字符串的文件
+access_api.log.20180626_57.log.gz  access.log.20180625_39.log.gz              report_client.log.20180624_19.log.gz          report_push.log.20180625_14.log.gz
+access_api.log.20180626_58.log.gz  access.log.20180625_3.log.gz               report_client.log.20180624_1.log.gz           report_push.log.20180625_15.log.gz
+access_api.log.20180626_59.log.gz  access.log.20180625_40.log.gz              report_client.log.20180624_20.log.gz          report_push.log.20180625_16.log.gz
+root@mng-68:/data1/log/cv# ll | grep -v gz
+total 58336536
+drwxrwxrwx 2 root     root      25452544 Jun 28 09:42 ./
+drwxr-xr-x 7 root     root          4096 Feb 28 17:47 ../
+-rw-r--r-- 1 td-agent td-agent   3245412 Jun 24 06:25 error.log.20180624_0.log
+-rw-r--r-- 1 td-agent td-agent  17492032 Jun 25 00:10 error.log.20180624_1.log
 ```
 
 ### find
@@ -540,7 +552,13 @@ root@ubuntu:/tmp# gzip -c file1.txt file2.txt > foo.gz
 
 ```
 
-### 分文件压缩
+### tar
+
+```
+tar -zcvf archive.tar.gz directory/ 
+```
+
+### √分文件压缩
 
 ```
 假设当前目录下有proc目录。
