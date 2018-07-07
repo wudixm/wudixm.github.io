@@ -537,3 +537,20 @@ $ git cherry-pick 38361a55    # 这个 38361a55 号码，位于v3.0分支中：
 其中，<start-commit-id>到<end-commit-id>只需要commit-id的前6位即可，并且<start-commit-id>在时间上必须早于<end-commit-id>
 注：以上合并，需要手动push代码。
 
+### git stash
+
+```
+git stash apply
+git stash apply stash@{2}
+If you don’t specify a stash, Git assumes the most recent stash and tries to apply it:
+
+git stash drop   remove stash
+$ git stash drop stash@{0}
+Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)
+
+git stash pop
+You can also run git stash pop to apply the stash and then immediately drop it from your stack.
+
+
+```
+
