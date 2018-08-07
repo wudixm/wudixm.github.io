@@ -554,3 +554,27 @@ You can also run git stash pop to apply the stash and then immediately drop it f
 
 ```
 
+### discard changes in working directory
+
+```
+root@mng-68:/data3/src/colorv-microservice-bot/colorv-bot# git status
+On branch bot
+Your branch is behind 'origin/bot' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   Dockerfile
+
+git checkout -- file
+```
+
+### Copy last commit hash
+
+```
+git log --pretty=format:'%h' -n 1 | pbcopy
+git log --pretty=format:'%H' -n 1 | pbcopy
+see also git log --help -> PRETTY FORMAT
+```
+
