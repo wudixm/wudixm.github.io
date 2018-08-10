@@ -366,3 +366,26 @@ public class Test {
 - **即使使用了 java 8 的环境，一些 IDE 仍然可能在一些代码的实时编译提示时出现异常的提示（例如无法发现 java 8 的语法错误），因此不要过度依赖 IDE。**
 
 
+### toIntExact
+
+```
+public static int toIntExact(long value)
+```
+
+Returns the value of the `long` argument; throwing an exception if the value overflows an `int`.
+
+- Parameters:
+
+  `value` - the long value
+
+- Returns:
+
+  the argument as an int
+
+- Throws:
+
+  `ArithmeticException` - if the `argument` overflows an int
+
+- Since:
+
+  1.8
