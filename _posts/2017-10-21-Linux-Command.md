@@ -363,6 +363,10 @@ http://www.infor.kanazawa-it.ac.jp/~ishii/lhaunix/
 
 ---------------------------------------------
 
+#### jar 文件
+
+➜  classes unzip colorv-bot-0.0.1-SNAPSHOT.jar
+
 ### 后台执行
 
 ```
@@ -903,5 +907,79 @@ Curl还提供了选项，同时下载多个文件。要下载多个文件使用�
 5.通过Curl代理服务器下载文件
 如果服务器上的文件只能通过代理服务器，或者你要使用代理下载文件，使用-x其次是代理服务器地址和端口，通过代理服务器来下载文件。
 $ curl -x my.proxy.com:3128 -O http://example.net/myfile.zip
+
+
+curl -H "Content-Type:application/json" -d '{"video_id":"1", "video_digest_status":0,"video_activity_status":1,"user_real_play":1,"coins_so_far":1,"followers":20,"group_member_rank":10,"user_vip":1,"day_time_flag":1,"diamonds_so_far":2,"active_status":"ACTIVE","video_created_at":"2018-07-03 11:11:11"}' http://10.25.172.135:8005/calculate_rate/mock
+
+
+
+假设目标url 为：127.0.0.1:8080/login
+
+使用curl发送GET请求：curl protocol://address:port/url?args
+
+curl http://127.0.0.1:8080/login?admin&passwd=12345678
+
+使用curl发送POST请求：curl -d "args" protocol://address:port/url
+
+curl -d "user=admin&passwd=12345678" http://127.0.0.1:8080/login
+
+这种方法是参数直接在header里面的，如需将输出指定到文件可以通过重定向进行操作.
+curl -H "Content-Type:application/json" -X POST -d 'json data' URL
+
+curl -H "Content-Type:application/json" -X POST -d '{"user": "admin", "passwd":"12345678"}' http://127.0.0.1:8000/login
+
+```
+
+### cut
+
+```
+➜  webcv git:(master) echo $PATH
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+➜  webcv git:(master) echo $PATH | cut -d ':' -f 1
+/usr/local/bin
+➜  webcv git:(master) echo $PATH | cut -d ':' -f 2
+/usr/bin
+➜  webcv git:(master) echo $PATH | cut -d ':' -f 3
+/bin
+➜  webcv git:(master) echo $PATH | cut -d ':' -f 4
+/usr/sbin
+➜  webcv git:(master) echo $PATH | cut -d ':' -f 5
+/sbin
+
+
+How can the delimiter be defined as a tab
+
+Two ways:
+Press Ctrl-v + Tab
+
+cut -f2 -d'   ' infile
+or write it like this:
+
+cut -f2 -d$'\t' infile
+
+```
+
+### sed
+
+```
+➜  colorv-microservice git:(hot) ✗ gss | sed s/^//
+M  colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
+?? colorv-bot/
+➜  colorv-microservice git:(hot) ✗ gss | sed s/^..//
+ colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
+ colorv-bot/
+➜  colorv-microservice git:(hot) ✗ gss | sed s/^...//
+colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
+colorv-bot/
+```
+
+### head
+
+```
+➜  colorv-microservice git:(hot) ✗ gss | sed s/^...//
+colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
+colorv-bot/
+➜  colorv-microservice git:(hot) ✗ gss | sed s/^...// | head -1
+colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
 ```
 
