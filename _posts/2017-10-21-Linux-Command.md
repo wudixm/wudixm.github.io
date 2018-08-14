@@ -983,3 +983,14 @@ colorv-bot/
 colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
 ```
 
+### 端口占用
+
+```
+netstat -tulpn | grep LISTEN
+
+
+sudo lsof -i -P -n | grep LISTEN 
+sudo netstat -tulpn | grep LISTEN
+sudo nmap -sTU -O IP-address-Here
+```
+
