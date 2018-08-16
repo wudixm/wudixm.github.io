@@ -444,6 +444,11 @@ drwxrwxrwx 2 root     root      25452544 Jun 28 09:42 ./
 drwxr-xr-x 7 root     root          4096 Feb 28 17:47 ../
 -rw-r--r-- 1 td-agent td-agent   3245412 Jun 24 06:25 error.log.20180624_0.log
 -rw-r--r-- 1 td-agent td-agent  17492032 Jun 25 00:10 error.log.20180624_1.log
+
+
+-n, --line-number
+             Each output line is preceded by its relative line number in the file, starting at line 1.  The line number counter is reset for each file pro-
+             cessed.  This option is ignored if -c, -L, -l, or -q is specified.
 ```
 
 ### find
