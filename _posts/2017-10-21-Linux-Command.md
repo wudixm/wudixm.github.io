@@ -82,6 +82,15 @@ of the stuck situation.
 
 If both input and output are redirected, you are really stuck.
 
+#### 前后几行
+
+```
+grep -A 5 可以显示匹配内容以及后面的5行内容
+grep -B 5 可以显示匹配内容以及前面的5行内容
+grep -C 5 可以显示匹配内容以及前后面的5行内容
+
+```
+
 
 
 ### 显示磁盘空间
@@ -419,7 +428,37 @@ alias重置的方法与第一次设置的时候一样
 格式：unalias name
 
 #  unalias cp
+
+重新创建alias
+vi ~/.bashrc
+
 ```
+
+### 新添加alias
+
+执行`vi ~/.bashrc`，当前内容如下：
+
+```
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias l="ls -al"
+alias git='LANG=en_GB git'
+alias gst='git status'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+```
+
+
+
+
 
 ### grep 
 
