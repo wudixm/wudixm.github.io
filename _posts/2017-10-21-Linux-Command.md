@@ -1038,3 +1038,49 @@ sudo netstat -tulpn | grep LISTEN
 sudo nmap -sTU -O IP-address-Here
 ```
 
+### 磁盘占用排序
+
+#### sort -h与-g参数的区别
+
+-h参数是GNU coreutils >= 7.5以后新增的参数，-h会以K、M、G这种大小的顺序进行人类便于识别的顺序进行排序。不过在一些老的linux发行版里，sort里可能没有这个参数。这个时候就需要使用-g参数。而du * -sh|sort -h与du * -s|sort -g 的排序效果是相同的。两个参数的具体区别如下：
+
+```
+-h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)-g, --general-numeric-sort  compare according to general numerical value
+```
+
+```
+➜  ~ du -sh ./* | sort -h
+4.0K	./hoytcron
+8.0K	./Public
+ 56K	./dump.rdb
+684K	./Applications
+800K	./work
+1.7M	./Dropbox
+ 86M	./Desktop
+ 86M	./Music
+285M	./IdeaProjects
+395M	./Downloads
+456M	./Pictures
+1.1G	./Documents
+9.9G	./Movies
+ 10G	./local
+ 22G	./Library
+ 
+ ➜  ~ du -sh ./* | sort -g
+1.1G	./Documents
+1.7M	./Dropbox
+4.0K	./hoytcron
+8.0K	./Public
+9.9G	./Movies
+ 10G	./local
+ 22G	./Library
+ 56K	./dump.rdb
+ 86M	./Desktop
+ 86M	./Music
+285M	./IdeaProjects
+395M	./Downloads
+456M	./Pictures
+684K	./Applications
+800K	./work
+```
+
