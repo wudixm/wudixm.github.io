@@ -19,3 +19,24 @@ update A, B  set A.mc = B.mc where A.bmbh = B.bmbh and A.xmbh = B.xmbh;
 ```
 update A INNER JOIN B ON A.bmbh = B.bmbh AND A.xmbh = B.xmbh SET A.mc = B.mc;
 ```
+### mysql 如何用一条SQL将一张表里的数据插入到另一张表
+
+#### 1. 表结构完全一样
+
+```
+ insert into 表1
+  select * from 表2
+```
+
+####  2. 表结构不一样（这种情况下得指定列名）
+
+```
+  insert into 表1 (列名1,列名2,列名3)
+  select  列1,列2,列3 from 表2
+```
+
+#### 3、只从另外一个表取部分值
+
+```
+insert into 表1 (列名1,列名2,列名3) values(列1,列2,(select 列3 from 表2));
+```
