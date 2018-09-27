@@ -578,3 +578,127 @@ git log --pretty=format:'%H' -n 1 | pbcopy
 see also git log --help -> PRETTY FORMAT
 ```
 
+### git ignore 文件不起作用
+
+```
+➜  template git:(master) ✗ gst
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   .idea/template.iml
+	modified:   .idea/workspace.xml
+	modified:   translate/model.py
+	modified:   translate_template.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	data/
+	desc.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+➜  template git:(master) ✗ git checkout -- .idea/template.iml
+
+可能是因为IDE 或者其它方式，自己把.idea 文件夹下的文件添加到了暂存区，所以看上去一直显示，利用
+git checkout -- filename
+去掉修改即可
+```
+
+### Git 回退到某个commit
+
+[原文](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013744142037508cf42e51debf49668810645e02887691000)
+
+好了，现在我们启动时光穿梭机，准备把`readme.txt`回退到上一个版本，也就是`add distributed`的那个版本，怎么做呢？
+
+首先，Git必须知道当前版本是哪个版本，在Git中，用`HEAD`表示当前版本，也就是最新的提交`1094adb...`（注意我的提交ID和你的肯定不一样），上一个版本就是`HEAD^`，上上一个版本就是`HEAD^^`，当然往上100个版本写100个`^`比较容易数不过来，所以写成`HEAD~100`。
+
+现在，我们要把当前版本`append GPL`回退到上一个版本`add distributed`，就可以使用`git reset`命令：
+
+```
+$ git reset --hard HEAD^
+HEAD is now at e475afc add distributed
+
+```
+
+`--hard`参数有啥意义？这个后面再讲，现在你先放心使用。
+
+看看`readme.txt`的内容是不是版本`add distributed`：
+
+```
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software.
+
+```
+
+果然被还原了。
+
+还可以继续回退到上一个版本`wrote a readme file`，不过且慢，然我们用`git log`再看看现在版本库的状态：
+
+```
+$ git log
+commit e475afc93c209a690c39c13a46716e8fa000c366 (HEAD -> master)
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Fri May 18 21:03:36 2018 +0800
+
+    add distributed
+
+commit eaadf4e385e865d25c48e7ca9c8395c3f7dfaef0
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Fri May 18 20:59:18 2018 +0800
+
+    wrote a readme file
+
+```
+
+最新的那个版本`append GPL`已经看不到了！好比你从21世纪坐时光穿梭机来到了19世纪，想再回去已经回不去了，肿么办？
+
+办法其实还是有的，只要上面的命令行窗口还没有被关掉，你就可以顺着往上找啊找啊，找到那个`append GPL`的`commit id`是`1094adb...`，于是就可以指定回到未来的某个版本：
+
+```
+$ git reset --hard 1094a
+HEAD is now at 83b0afe append GPL
+
+```
+
+版本号没必要写全，前几位就可以了，Git会自动去找。当然也不能只写前一两位，因为Git可能会找到多个版本号，就无法确定是哪一个了。
+
+再小心翼翼地看看`readme.txt`的内容：
+
+```
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+
+```
+
+果然，我胡汉三又回来了。
+
+Git的版本回退速度非常快，因为Git在内部有个指向当前版本的`HEAD`指针，当你回退版本的时候，Git仅仅是把HEAD从指向`append GPL`：
+
+![git-head](https://cdn.liaoxuefeng.com/cdn/files/attachments/001384907584977fc9d4b96c99f4b5f8e448fbd8589d0b2000/0)
+
+改为指向`add distributed`：
+
+![git-head-move](https://cdn.liaoxuefeng.com/cdn/files/attachments/001384907594057a873c79f14184b45a1a66b1509f90b7a000/0)
+
+然后顺便把工作区的文件更新了。所以你让`HEAD`指向哪个版本号，你就把当前版本定位在哪。
+
+现在，你回退到了某个版本，关掉了电脑，第二天早上就后悔了，想恢复到新版本怎么办？找不到新版本的`commit id`怎么办？
+
+在Git中，总是有后悔药可以吃的。当你用`$ git reset --hard HEAD^`回退到`add distributed`版本时，再想恢复到`append GPL`，就必须找到`append GPL`的commit id。Git提供了一个命令`git reflog`用来记录你的每一次命令：
+
+```
+$ git reflog
+e475afc HEAD@{1}: reset: moving to HEAD^
+1094adb (HEAD -> master) HEAD@{2}: commit: append GPL
+e475afc HEAD@{3}: commit: add distributed
+eaadf4e HEAD@{4}: commit (initial): wrote a readme file
+
+```
+
+终于舒了口气，从输出可知，`append GPL`的commit id是`1094adb`，现在，你又可以乘坐时光机回到未来了。
