@@ -702,3 +702,42 @@ eaadf4e HEAD@{4}: commit (initial): wrote a readme file
 ```
 
 终于舒了口气，从输出可知，`append GPL`的commit id是`1094adb`，现在，你又可以乘坐时光机回到未来了。
+
+### 工作中reset hard
+
+```
+➜  cv git:(instantCelery) git reset --hard 0b0eb48fe5e4d469cbcd6b95d8e962b701ee57fb
+HEAD is now at 0b0eb48fe bug fix for kind is script not video
+➜  cv git:(instantCelery) gst
+On branch instantCelery
+Your branch is behind 'origin/instantCelery' by 84 commits, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+
+nothing to commit, working tree clean
+➜  cv git:(instantCelery) git log
+➜  cv git:(instantCelery) gp
+To code.aliyun.com:cvteam/cv.git
+ ! [rejected]            instantCelery -> instantCelery (non-fast-forward)
+error: failed to push some refs to 'git@code.aliyun.com:cvteam/cv.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+刚刚reset hard 过后，利用git status 肯定会显示your branch is behind origin  by xxx commits。因为本地的已经回退到前面的版本，这个时候如果想push 上去，肯定是不允许的，如上面hint 中的第一点，reject... your branch is behind...
+
+这个时候我用过 git push -f ，不确定这样是不是正确的操作，但是我只是想要硬回退到某个commit 上，远程也需要回退，所以目的达到了。
+
+➜  cv git:(instantCelery) git push -f
+Total 0 (delta 0), reused 0 (delta 0)
+To code.aliyun.com:cvteam/cv.git
+ + 406733b05...0b0eb48fe instantCelery -> instantCelery (forced update)
+➜  cv git:(instantCelery) gst
+On branch instantCelery
+Your branch is up-to-date with 'origin/instantCelery'.
+
+nothing to commit, working tree clean
+➜  cv git:(instantCelery) gl
+Already up-to-date.
+```
+
