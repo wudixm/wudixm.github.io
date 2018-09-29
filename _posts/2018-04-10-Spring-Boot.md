@@ -1,3 +1,10 @@
+---
+title: Spring 配置方式
+excerpt: |
+  Spring 配置方式
+category: Spring
+feature_image: "https://picsum.photos/2560/600?image=872"
+---
 ### Spring @RequestParam 与@RequestBody
 
 
@@ -363,3 +370,142 @@ public class Login {
 
 ```
 
+[原文](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html)
+
+# Spring Session - Spring Boot
+
+Rob Winch, Vedran PavićVersion 2.0.4.RELEASE
+
+Table of Contents
+
+- [1. Updating Dependencies](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#updating-dependencies)
+- [2. Spring Boot Configuration](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-spring-configuration)
+- [3. Configuring the Redis Connection](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-redis-configuration)
+- [4. Servlet Container Initialization](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-servlet-configuration)
+- \5. Boot Sample Application
+  - [5.1. Running the Boot Sample Application](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-running)
+  - [5.2. Exploring the security Sample Application](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-explore)
+  - [5.3. How does it work?](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-how)
+
+This guide describes how to use Spring Session to transparently leverage Redis to back a web application’s `HttpSession` when using Spring Boot.
+
+| **   | The completed guide can be found in the [boot sample application](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-sample). |
+| ---- | ------------------------------------------------------------ |
+|      |                                                              |
+
+## 1. Updating Dependencies
+
+Before you use Spring Session, you must ensure to update your dependencies. We assume you are working with a working Spring Boot web application. If you are using Maven, ensure to add the following dependencies:
+
+pom.xml
+
+```
+<dependencies>
+	<!-- ... -->
+
+	<dependency>
+		<groupId>org.springframework.session</groupId>
+		<artifactId>spring-session-data-redis</artifactId>
+	</dependency>
+</dependencies>
+```
+
+Spring Boot provides dependency management for Spring Session modules, so there’s no need to explicitly declare dependency version.
+
+## 2. Spring Boot Configuration
+
+After adding the required dependencies, we can create our Spring Boot configuration. Thanks to first-class auto configuration support, setting up Spring Session backed by Redis is as simple as adding a single configuration property to your `application.properties`:
+
+src/main/resources/application.properties
+
+```
+spring.session.store-type=redis # Session store type.
+```
+
+Under the hood, Spring Boot will apply configuration that is equivalent to manually adding `@EnableRedisHttpSession`annotation. This creates a Spring Bean with the name of `springSessionRepositoryFilter` that implements Filter. The filter is what is in charge of replacing the `HttpSession` implementation to be backed by Spring Session.
+
+Further customization is possible using `application.properties`:
+
+src/main/resources/application.properties
+
+```
+server.servlet.session.timeout= # Session timeout. If a duration suffix is not specified, seconds will be used.
+spring.session.redis.flush-mode=on-save # Sessions flush mode.
+spring.session.redis.namespace=spring:session # Namespace for keys used to store sessions.
+```
+
+For more information, refer to [Spring Session](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-session) portion of the Spring Boot documentation.
+
+## 3. Configuring the Redis Connection
+
+Spring Boot automatically creates a `RedisConnectionFactory` that connects Spring Session to a Redis Server on localhost on port 6379 (default port). In a production environment you need to ensure to update your configuration to point to your Redis server. For example, you can include the following in your **application.properties**
+
+src/main/resources/application.properties
+
+```
+spring.redis.host=localhost # Redis server host.
+spring.redis.password= # Login password of the redis server.
+spring.redis.port=6379 # Redis server port.
+```
+
+For more information, refer to [Connecting to Redis](https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/htmlsingle/#boot-features-connecting-to-redis) portion of the Spring Boot documentation.
+
+## 4. Servlet Container Initialization
+
+Our [Spring Boot Configuration](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html#boot-spring-configuration) created a Spring Bean named `springSessionRepositoryFilter` that implements `Filter`. The `springSessionRepositoryFilter` bean is responsible for replacing the `HttpSession` with a custom implementation that is backed by Spring Session.
+
+In order for our `Filter` to do its magic, Spring needs to load our `Config` class. Last we need to ensure that our Servlet Container (i.e. Tomcat) uses our `springSessionRepositoryFilter` for every request. Fortunately, Spring Boot takes care of both of these steps for us.
+
+## 5. Boot Sample Application
+
+The Boot Sample Application demonstrates how to use Spring Session to transparently leverage Redis to back a web application’s `HttpSession` when using Spring Boot.
+
+### 5.1. Running the Boot Sample Application
+
+You can run the sample by obtaining the [source code](https://github.com/spring-projects/spring-session/archive/2.0.4.RELEASE.zip) and invoking the following command:
+
+| **   | For the sample to work, you must [install Redis 2.8+](https://redis.io/download) on localhost and run it with the default port (6379). Alternatively, you can update the `RedisConnectionFactory` to point to a Redis server. Another option is to use [Docker](https://www.docker.com/) to run Redis on localhost. See [Docker Redis repository](https://hub.docker.com/_/redis/) for detailed instructions. |
+| ---- | ------------------------------------------------------------ |
+|      |                                                              |
+
+```
+$ ./gradlew :spring-session-sample-boot-redis:bootRun
+```
+
+You should now be able to access the application at <http://localhost:8080/>
+
+### 5.2. Exploring the security Sample Application
+
+Try using the application. Enter the following to log in:
+
+- **Username** *user*
+- **Password** *password*
+
+Now click the **Login** button. You should now see a message indicating your are logged in with the user entered previously. The user’s information is stored in Redis rather than Tomcat’s `HttpSession` implementation.
+
+### 5.3. How does it work?
+
+Instead of using Tomcat’s `HttpSession`, we are actually persisting the values in Redis. Spring Session replaces the `HttpSession` with an implementation that is backed by Redis. When Spring Security’s `SecurityContextPersistenceFilter` saves the `SecurityContext` to the `HttpSession` it is then persisted into Redis.
+
+When a new `HttpSession` is created, Spring Session creates a cookie named SESSION in your browser that contains the id of your session. Go ahead and view the cookies (click for help with [Chrome](https://developers.google.com/web/tools/chrome-devtools/manage-data/cookies) or [Firefox](https://developer.mozilla.org/en-US/docs/Tools/Storage_Inspector)).
+
+If you like, you can easily remove the session using redis-cli. For example, on a Linux based system you can type:
+
+```
+$ redis-cli keys '*' | xargs redis-cli del
+```
+
+| **   | The Redis documentation has instructions for [installing redis-cli](https://redis.io/topics/quickstart). |
+| ---- | ------------------------------------------------------------ |
+|      |                                                              |
+
+Alternatively, you can also delete the explicit key. Enter the following into your terminal ensuring to replace `7e8383a4-082c-4ffe-a4bc-c40fd3363c5e` with the value of your SESSION cookie:
+
+```
+$ redis-cli del spring:session:sessions:7e8383a4-082c-4ffe-a4bc-c40fd3363c5e
+```
+
+Now visit the application at <http://localhost:8080/> and observe that we are no longer authenticated.
+
+Version 2.0.4.RELEASE
+Last updated 2018-04-05 09:49:06 +00:00
