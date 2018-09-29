@@ -2,7 +2,7 @@
 title: Aerospike Java 客户端
 excerpt: |
   Aerospike Java 客户端
-category: DataBase
+category: 数据库
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ### Aerospike Java Client
