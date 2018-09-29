@@ -1,3 +1,10 @@
+---
+title: Spring Dev Tools 热部署
+excerpt: |
+  Spring Dev Tools 热部署
+category: Spring
+feature_image: "https://picsum.photos/2560/600?image=872"
+---
 ## 20. Developer Tools
 
 Spring Boot includes an additional set of tools that can make the application development experience a little more pleasant. The `spring-boot-devtools` module can be included in any project to provide additional development-time features. To include devtools support, add the module dependency to your build, as shown in the following listings for Maven and Gradle:
