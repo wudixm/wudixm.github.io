@@ -2,7 +2,7 @@
 title: Spring Cloud
 excerpt: |
   Spring Cloud
-category: Spring Cloud
+category: Spring
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ## 11. Developing Your First Spring Boot Application
