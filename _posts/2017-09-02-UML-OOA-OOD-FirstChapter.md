@@ -2,7 +2,7 @@
 title: 第一章 软件工程和建模
 excerpt: |
   第一章 软件工程和建模
-category: 分析与设计
+category: 设计模式
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ## 第1章 软件工程和建模 ##

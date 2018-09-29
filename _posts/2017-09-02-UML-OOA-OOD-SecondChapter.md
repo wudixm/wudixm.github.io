@@ -2,7 +2,7 @@
 title: 第二章 面向对象技术
 excerpt: |
   第二章 面向对象技术
-category: 分析与设计
+category: 设计模式
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ## 第2章 面向对象技术 ##
