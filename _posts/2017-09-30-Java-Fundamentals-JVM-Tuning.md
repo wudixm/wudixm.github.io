@@ -2,7 +2,7 @@
 title: Java 性能调优
 excerpt: |
   Java 性能调优
-category: Java 高级
+category: Java 基础
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 ## Java Stack + Heap with Reference & Instance Variables
