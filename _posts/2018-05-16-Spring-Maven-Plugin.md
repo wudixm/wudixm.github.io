@@ -1,3 +1,10 @@
+---
+title: Spring Boot Maven 插件
+excerpt: |
+  Spring Boot Maven 插件
+category: Spring
+feature_image: "https://picsum.photos/2560/600?image=872"
+---
 ### Spring Boot的Maven插件Spring Boot Maven plugin详解
 
 [原文](https://blog.csdn.net/taiyangdao/article/details/75303181)
