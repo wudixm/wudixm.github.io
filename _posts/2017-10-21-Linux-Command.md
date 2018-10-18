@@ -1084,3 +1084,27 @@ sudo nmap -sTU -O IP-address-Here
 800K	./work
 ```
 
+### awk 
+
+设置分隔符
+默认域分隔符是"空白键" 或 "[tab]键",如果想用其它符合作分隔符,参照下例:
+
+/etc/passwd中是用:分割的
+
+如下:
+
+```sh
+#cat /etc/passwd 
+root:x:0:0:root:/root:/bin/bash 
+daemon:x:2:2:daemon:/sbin:/sbin/nologin 
+bin:x:1:1:bin:/bin:/sbin/nologin
+sys:x:80:80:desktop:/var/lib/menu/kde:/sbin/nologin 
+如果只是显示/etc/passwd的账户
+
+#cat /etc/passwd |awk  -F ':'  '{print $1}'  
+root
+daemon
+bin
+sys
+```
+-F指定域分隔符为':'。     {print $1}输出第一列
