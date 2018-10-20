@@ -239,3 +239,180 @@ LISP 最著名的特性是它的代码形式和数据表示形式一致，并有
 【set】
 
 当然，数据结构是可以嵌套的。Clojure并不要求一个vector、map或set里的元素是同一类型，也就是说下面的数据都是合法的：
+
+### loop
+
+```
+(defn exampleLoop []
+  (loop [x 10]
+    (when (> x 0)
+      (println x)
+      (recur (dec  x ))
+      )
+    )
+  )
+(exampleLoop)
+```
+### reduce
+
+#### reduce
+clojure.core
+Available since 1.0 (source)
+`(reduce f coll)(reduce f val coll)`
+f should be a function of 2 arguments. If val is not supplied,
+returns the result of applying f to the first 2 items in coll, then
+applying f to that result and the 3rd item, etc. If coll contains no
+items, f must accept no arguments as well, and reduce returns the
+result of calling f with no arguments.  If coll has only 1 item, it
+is returned and f is not called.  If val is supplied, returns the
+result of applying f to val and the first item in coll, then
+applying f to that result and the 2nd item, etc. If coll contains no
+items, returns val and f is not called.
+#### EXAMPLES
+```
+(reduce + [1 2 3 4 5])  ;;=> 15
+(reduce + [])           ;;=> 0
+(reduce + [1])          ;;=> 1
+(reduce + [1 2])        ;;=> 3
+(reduce + 1 [])         ;;=> 1
+(reduce + 1 [2 3])      ;;=> 6
+```
+### conj
+clojure.core
+Available since 1.0 (source)
+(conj coll x)(conj coll x & xs)
+conj[oin]. Returns a new collection with the xs
+  'added'. (conj nil item) returns (item).  The 'addition' may
+  happen at different 'places' depending on the concrete type.
+#### EXAMPLES
+```
+;; notice that conjoining to a vector is done at the end
+(conj [1 2 3] 4)
+;;=> [1 2 3 4]
+
+;; notice conjoining to a list is done at the beginning
+(conj '(1 2 3) 4)
+;;=> (4 1 2 3)
+
+(conj ["a" "b" "c"] "d")
+;;=> ["a" "b" "c" "d"]
+
+;; conjoining multiple items is done in order
+(conj [1 2] 3 4)
+;;=> [1 2 3 4]
+
+(conj '(1 2) 3 4)
+;;=> (4 3 1 2)
+
+(conj [[1 2] [3 4]] [5 6])
+;;=> [[1 2] [3 4] [5 6]]
+
+;; conjoining to maps only take items as vectors of length exactly 2
+(conj {1 2, 3 4} [5 6])
+;;=> {5 6, 1 2, 3 4}
+
+(conj {:firstname "John" :lastname "Doe"} {:age 25 :nationality "Chinese"})
+;;=> {:nationality "Chinese", :age 25, :firstname "John", :lastname "Doe"}
+
+;; conj on a set
+(conj #{1 3 4} 2)
+;;=> #{1 2 3 4}
+```
+
+### line-seq
+clojure.core
+Available since 1.0 (source)
+`(line-seq rdr)`
+Returns the lines of text from rdr as a lazy sequence of strings.
+rdr must implement java.io.BufferedReader.
+EXAMPLES
+```
+link
+;; Count lines of a file (loses head):
+user=> (with-open [rdr (clojure.java.io/reader "/etc/passwd")]
+         (count (line-seq rdr)))
+
+link
+(import '(java.io BufferedReader StringReader))
+
+;; line terminators are stripped
+user=> (line-seq (BufferedReader. (StringReader. "1\n2\n\n3")))
+("1" "2" "" "3")
+
+;; empty string gives nil
+user=> (line-seq (BufferedReader. (StringReader. "")))
+nil
+link
+;; read from standard input
+user=> (nth (line-seq (java.io.BufferedReader. *in*)) 2)
+  #_=> 0
+  #_=> 1
+  #_=> 2
+"2"
+```
+
+### with-open
+clojure.core
+Available since 1.0 (source)
+`(with-open bindings & body)`
+bindings => [name init ...]
+ Evaluates body in a try expression with names bound to the values
+of the inits, and a finally clause that calls (.close name) on each
+name in reverse order.
+EXAMPLES
+```
+;; Opens the file 'myfile.txt' and prints out the contents.  The 
+;; 'with-open' ensures that the reader is closed at the end of the 
+;; form.  
+;; 
+;; Please note that reading a file a character at a time is not 
+;; very efficient.
+
+user=> (with-open [r (clojure.java.io/input-stream "myfile.txt")] 
+         (loop [c (.read r)] 
+           (if (not= c -1)
+             (do 
+               (print (char c)) 
+               (recur (.read r))))))
+link
+(defn write-csv-file
+  "Writes a csv file using a key and an s-o-s (sequence of sequences)"
+  [out-sos out-file]
+
+  (spit out-file "" :append false)
+  (with-open [out-data (io/writer out-file)]
+      (csv/write-csv out-data out-sos)))
+
+link
+;; Try to read 3 lines of text from a test file and return them (to the REPL)
+;; as a list:
+(with-open [r (clojure.java.io/reader "test-0.txt")]
+  (binding [*in* r] (repeatedly 3 read-line)))
+
+;; The above returns a lazy seq without reading any lines while *in* is bound
+;; to the file, resulting in the original *in* (usually stdin) being read.
+;; To fix, wrap the body within the *in* binding in (doall ...):
+(with-open [r (clojure.java.io/reader "test-0.txt")]
+  (binding [*in* r] (doall (repeatedly 3 read-line))))
+
+;; That ensures the sequence will be fully realized with the binding of *in*
+;; still in effect, thus reading all 3 lines from the test file.
+```
+### cons
+cons
+clojure.core
+Available since 1.0 (source)
+`(cons x seq)`
+Returns a new seq where x is the first element and seq is
+  the rest.
+EXAMPLES
+link
+```
+;; prepend 1 to a list
+(cons 1 '(2 3 4 5 6))
+;;=> (1 2 3 4 5 6)
+
+;; notice that the first item is not expanded
+(cons [1 2] [4 5 6])
+;;=> ([1 2] 4 5 6)
+```
