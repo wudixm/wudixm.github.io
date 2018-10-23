@@ -416,3 +416,70 @@ link
 (cons [1 2] [4 5 6])
 ;;=> ([1 2] 4 5 6)
 ```
+
+### let binding
+
+We know that symbols are names for things, and that when evaluated, Clojure replaces those symbols with their corresponding values. `+`, for instance, is a symbol which points to the verb `#<core$_PLUS_ clojure.core$_PLUS_@12992c>`.
+
+```
+user=> +
+#<core$_PLUS_ clojure.core$_PLUS_@12992c>
+
+```
+
+When you try to use a symbol which has no defined meaning, Clojure refuses:
+
+```
+user=> cats
+
+CompilerException java.lang.RuntimeException: Unable to resolve symbol: cats in this context, compiling:(NO_SOURCE_PATH:0:0)
+
+```
+
+But we can define a meaning for a symbol within a specific expression, using `let`.
+
+```
+user=> (let [cats 5] (str "I have " cats " cats."))
+"I have 5 cats."
+
+```
+
+The `let` expression first takes a vector of *bindings*: alternating symbols and values that those symbols are *bound* to, within the remainder of the expression. “Let the symbol `cats` be 5, and construct a string composed of `"I have "`, `cats`, and `" cats"`.
+
+Let bindings apply only within the let expression itself. They also override any existing definitions for symbols at that point in the program. For instance, we can redefine addition to mean subtraction, for the duration of a `let`:
+
+```
+user=> (let [+ -] (+ 2 3))
+-1
+
+```
+
+But that definition doesn’t apply outside the let:
+
+```
+user=> (+ 2 3)
+5
+
+```
+
+We can also provide *multiple* bindings. Since Clojure doesn’t care about spacing, alignment, or newlines, I’ll write this on multiple lines for clarity.
+
+```
+user=> (let [person   "joseph"
+             num-cats 186]
+         (str person " has " num-cats " cats!"))
+"joseph has 186 cats!"
+
+```
+
+When multiple bindings are given, they are evaluated in order. Later bindings can use previous bindings.
+
+```
+user=> (let [cats 3
+             legs (* 4 cats)]
+         (str legs " legs all together"))
+"12 legs all together"
+
+```
+
+So fundamentally, `let` defines the meaning of symbols within an expression. When Clojure evaluates a `let`, it replaces all occurrences of those symbols in the rest of the `let` expression with their corresponding values, then evaluates the rest of the expression.
