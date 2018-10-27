@@ -483,3 +483,17 @@ user=> (let [cats 3
 ```
 
 So fundamentally, `let` defines the meaning of symbols within an expression. When Clojure evaluates a `let`, it replaces all occurrences of those symbols in the rest of the `let` expression with their corresponding values, then evaluates the rest of the expression.
+
+### name
+name
+clojure.core
+Available since 1.0 (source)
+(name x)
+Returns the name String of a string, symbol or keyword.
+如下不加`(name)` 方法的话，会在打印的时候抛出`java.lang.ClassCastException: clojure.lang.Keyword cannot be cast to java.lang.String` 异常
+
+```
+(defn wrap-log [handler]
+  (fn [request] (println (name (:request-method request) ) (:uri request) )
+  ))
+```
