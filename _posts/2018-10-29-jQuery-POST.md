@@ -47,3 +47,39 @@ By default, data passed in to the `data` option as an object (technically, anyth
 
 
 如文章中所说，如果不是一个string，则会默认转换成一个query string。
+
+改成如下：
+
+```js
+$.ajax({
+    url: '/finish_question',
+    type: 'POST',
+    data: data,
+    processData: false,
+    complete: function (jqXHR, textStatus) {
+        // callback
+        console.log("complete");
+        console.log(data);
+    }...
+```
+
+如果还想用以前的格式（需要转换）：
+
+```js
+$.ajax({
+    url: '/finish_question',
+    type: 'POST',
+    data: $.param(data), // 用param 方法
+    complete: function (jqXHR, textStatus) {
+        // callback
+        console.log("complete");
+        console.log(data);
+    }...
+```
+
+param 方法解释：
+
+**jQuery.param( obj )Returns: [String](http://api.jquery.com/Types/#String)**
+
+**Description: **Create a serialized representation of an array, a plain object, or a jQuery object suitable for use in a URL query string or Ajax request. In case a jQuery object is passed, it should contain input elements with name/value properties.
+
