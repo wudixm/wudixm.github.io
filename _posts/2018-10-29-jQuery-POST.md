@@ -83,3 +83,18 @@ param 方法解释：
 
 **Description: **Create a serialized representation of an array, a plain object, or a jQuery object suitable for use in a URL query string or Ajax request. In case a jQuery object is passed, it should contain input elements with name/value properties.
 
+### 怎么post json 对象
+
+[原文](https://stackoverflow.com/questions/5570747/jquery-posting-json)
+
+You post JSON like this
+
+```
+$.ajax(url, {
+    data : JSON.stringify(myJSObject),
+    contentType : 'application/json',
+    type : 'POST',
+    ...
+```
+
+if you pass an object as settings.data jQuery will convert it to query parameters and by default send with the data type application/x-www-form-urlencoded; charset=UTF-8, probably not what you want
