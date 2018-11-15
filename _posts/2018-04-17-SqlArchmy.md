@@ -84,3 +84,16 @@ Out[77]: []
 
 ```
 
+
+
+### in isnot
+
+```
+tbl = App.get_tbl(tbl_name, schema='coloru', db_name='db_search')
+        stmt = select([tbl.c.id, tbl.c.name])
+        stmt = stmt.where(tbl.c.id.in_(video_ids))
+        stmt = stmt.where(tbl.c.name.isnot(None))
+        stmt = stmt.where(tbl.c.name != '')
+        rows = list(stmt.execute())
+```
+
