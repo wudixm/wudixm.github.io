@@ -741,3 +741,33 @@ nothing to commit, working tree clean
 Already up-to-date.
 ```
 
+### fetch 清空本地对远程分支的缓存
+
+**问题：git delete remotes: remote refs do not exist**
+
+```
+You may need to prune your local "cache" of remote branches first. Try running:
+
+git fetch -p origin
+
+before deleting.
+
+
+➜  mngcv git:(groupNewReqScript) git push origin --delete group
+error: unable to delete 'group': remote ref does not exist
+error: failed to push some refs to 'git@code.aliyun.com:cvteam/mngcv.git'
+➜  mngcv git:(groupNewReqScript) git fetch -p origin
+
+
+
+From code.aliyun.com:cvteam/mngcv
+ - [deleted]           (none)     -> origin/group
+ - [deleted]           (none)     -> origin/group_active_update
+ - [deleted]           (none)     -> origin/instantCelery
+ - [deleted]           (none)     -> origin/javaverifyhot
+ - [deleted]           (none)     -> origin/removeDigestBug
+ - [deleted]           (none)     -> origin/wxGroupDailyScript
+➜  mngcv git:(groupNewReqScript)
+
+```
+
