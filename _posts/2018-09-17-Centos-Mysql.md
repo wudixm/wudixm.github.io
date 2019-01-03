@@ -19,7 +19,7 @@ service mysqld start/stop
 ➜  ~ mysql.server start
 Starting MySQL
 . SUCCESS!
-➜  ~
+➜  ~ mysql -u root
 ```
 
 ### 新增用户
@@ -126,5 +126,350 @@ mysql> select user, host from mysql.user;
 +----------+-------------------------+
 9 rows in set (0.00 sec)
 
+```
+
+### 升级到8.0
+
+```
+sudo yum update mysql-server
+
+
+[root@localhost OMS]# rpm -ivh  MySQL-server-advanced-5.5.8-1.rhel5.i386.rpm
+error: Failed dependencies:
+        MySQL conflicts with mysql-5.0.77-4.el5_6.6.x86_64
+        MySQL conflicts with mysql-5.0.77-4.el5_6.6.i386
+
+ 
+
+后查资料，用rpm -e  confictcompoent -- nodeps解决。如下举例说明：
+
+[root@localhost OMS]# rpm -e mysql-5.0.77-4.el5_6.6.x86_64 --nodeps
+[root@localhost OMS]# rpm -e mysql-5.0.77-4.el5_6.6.i386 --nodeps
+
+yum install mysql-community-server 
+
+```
+
+### 启动日志
+
+```
+vim /var/log/mysqld.log
+
+
+[root@iz8vbcmllue4daadc7mfm8z bin]# find / -name *ib_log*
+/var/lib/mysql/ib_logfile1
+/var/lib/mysql/ib_logfile0
+[root@iz8vbcmllue4daadc7mfm8z bin]#
+
+
+
+```
+
+### 改密码
+
+```
+mysqladmin -u root password 'new-password'
+
+```
+
+### 卸载
+
+```
+yum remove mysql mysql-server
+mv /var/lib/mysql /var/lib/mysql_old_backup
+sudo  yum install mysql mysql-server
+
+
+
+
+systemctl start mysqld.service
+```
+
+### 临时密码
+
+```
+7、修改临时密码
+为了加强安全性，MySQL5.7为root用户随机生成了一个密码，在error log中，关于error log的位置，如果安装的是RPM包，则默认是/var/log/mysqld.log。
+只有启动过一次mysql才可以查看临时密码
+
+
+grep 'temporary password' /var/log/mysqld.log（如果之前安装过MySQL则这里可能会有多个密码，用最后一个，注意这个密码输入时是可以粘贴的）
+
+```
+
+### 改密码出错，遇到policy requirements
+
+[原文](https://serverfault.com/questions/885674/mysql-cant-set-reset-password-for-root-user-properly-centos)
+
+```
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+mysql>
+
+
+Your password does not satisfy the current policy requirements.
+
+Assuming that the validate_password plugin is installed, it implements three levels of password checking: LOW, MEDIUM, and STRONG. The default is MEDIUM;
+
+Medium is defined as:
+
+MEDIUM policy adds the conditions that passwords must contain at least 1 numeric character, 1 lowercase character, 1 uppercase character, and 1 special (nonalphanumeric) character.
+
+Use a password that satisfies these requirements, set validate_password_policy to LOW or disable the password validation plugin.
+
+
+```
+
+### 改密码等级到LOW
+
+```
+mysql> SHOW VARIABLES LIKE 'validate_password%';
++--------------------------------------+--------+
+| Variable_name                        | Value  |
++--------------------------------------+--------+
+| validate_password.check_user_name    | ON     |
+| validate_password.dictionary_file    |        |
+| validate_password.length             | 8      |
+| validate_password.mixed_case_count   | 1      |
+| validate_password.number_count       | 1      |
+| validate_password.policy             | MEDIUM |
+| validate_password.special_char_count | 1      |
++--------------------------------------+--------+
+7 rows in set (0.11 sec)
+
+
+mysql> SET GLOBAL validate_password.policy=LOW;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+
+因为validate_password.length 为8，所以长度至少要8
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootroot';
+Query OK, 0 rows affected (0.10 sec)
+
+```
+
+### 修改密码的length
+
+[`validate_password_policy`](https://dev.mysql.com/doc/refman/5.7/en/validate-password-options-variables.html#sysvar_validate_password_policy) affects how `validate_password` uses its other policy-setting system variables, except for checking passwords against user names, which is controlled independently by [`validate_password_check_user_name`](https://dev.mysql.com/doc/refman/5.7/en/validate-password-options-variables.html#sysvar_validate_password_check_user_name).
+
+The [`validate_password_policy`](https://dev.mysql.com/doc/refman/5.7/en/validate-password-options-variables.html#sysvar_validate_password_policy) value can be specified using numeric values 0, 1, 2, or the corresponding symbolic values `LOW`, `MEDIUM`, `STRONG`. The following table describes the tests performed for each policy. For the length test, the required length is the value of the[`validate_password_length`](https://dev.mysql.com/doc/refman/5.7/en/validate-password-options-variables.html#sysvar_validate_password_length) system variable. Similarly, the required values for the other tests are given by other `validate_password_*xxx*`variables.
+
+```
+mysql> SET GLOBAL validate_password.length=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+mysql> SHOW VARIABLES LIKE 'validate_password%';
++--------------------------------------+-------+
+| Variable_name                        | Value |
++--------------------------------------+-------+
+| validate_password.check_user_name    | ON    |
+| validate_password.dictionary_file    |       |
+| validate_password.length             | 4     |
+| validate_password.mixed_case_count   | 1     |
+| validate_password.number_count       | 1     |
+| validate_password.policy             | LOW   |
+| validate_password.special_char_count | 1     |
++--------------------------------------+-------+
+7 rows in set (0.00 sec)
+
+
+length 改为1 的时候，再查看length 也是4，推测是最小长度是4
+```
+
+### 创建dev 用户
+
+```
+mysql> CREATE USER 'dev'@'localhost' IDENTIFIED BY 'devdev';
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'dev'@'localhost' WITH GRANT OPTION;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create database mm;
+Query OK, 1 row affected (0.07 sec)
+
+mysql> use mm;
+Database changed
+mysql>
+```
+
+### net-working
+
+```
+mysql> SHOW VARIABLES LIKE 'skip_networking';
++-----------------+-------+
+| Variable_name   | Value |
++-----------------+-------+
+| skip_networking | ON    |
++-----------------+-------+
+1 row in set (0.51 sec)
+
+mysql>
+```
+
+### 重启mysql
+
+```
+service mysqld restart
+
+```
+
+### skip grant tables
+
+```
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+ERROR 1290 (HY000): The MySQL server is running with the --skip-grant-tables option so it cannot execute this statement
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.65 sec)
+
+mysql>
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql>
+```
+
+### mysqld 
+
+```
+[root@iz8vbcmllue4daadc7mfm8z quiztest1]# mysqld --user=root --skip-networking=False
+
+这命令不好使
+```
+
+### systemctl
+
+#### show-env
+
+```
+show-env
+
+[root@iz8vbcmllue4daadc7mfm8z sbin]# systemctl show-environment
+LANG=en_US.UTF-8
+MYSQLD_OPTS=--user=mysql --skip-grant-tables --skip-networking
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+```
+
+#### import-env
+
+```
+import-env
+
+DB_URL=databus.dev.mysite.io:8080
+systemctl import-environment DB_URL
+```
+
+#### set / unset env
+
+```
+set-env   unset-env
+
+systemctl set-environment MYSQLD_OPTS="--general_log=1"
+systemctl unset-environment MYSQLD_OPTS
+```
+
+### Bash 查看端口
+
+```bash
+[root@iz8vbcmllue4daadc7mfm8z init.d]# netstat -pan | grep mysql
+unix  2      [ ACC ]     STREAM     LISTENING     4369082  18609/mysqld         /var/lib/mysql/mysql.sock
+unix  2      [ ACC ]     STREAM     LISTENING     4369086  18609/mysqld         /var/run/mysqld/mysqlx.sock
+unix  2      [ ]         DGRAM                    4369065  18609/mysqld
+[root@iz8vbcmllue4daadc7mfm8z init.d]#
+
+```
+
+### mysql 内部查看端口
+
+```mysql
+mysql> show global variables like 'port';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| port          | 3306  |
++---------------+-------+
+1 row in set (0.01 sec)
+
+mysql>
+```
+
+### service status
+
+```bash
+[root@iz8vbcmllue4daadc7mfm8z quiztest1]# systemctl status mysqld
+● mysqld.service - MySQL Server
+   Loaded: loaded (/usr/lib/systemd/system/mysqld.service; enabled; vendor preset: disabled)
+   Active: active (running) since 一 2018-12-10 18:30:30 CST; 7s ago
+     Docs: man:mysqld(8)
+           http://dev.mysql.com/doc/refman/en/using-systemd.html
+  Process: 18416 ExecStartPre=/usr/bin/mysqld_pre_systemd (code=exited, status=0/SUCCESS)
+ Main PID: 18438 (mysqld)
+   Status: "SERVER_OPERATING"
+   Memory: 394.4M
+   CGroup: /system.slice/mysqld.service
+           └─18438 /usr/sbin/mysqld --user=mysql --skip-grant-tables --skip-networking=0
+
+12月 10 18:30:25 iz8vbcmllue4daadc7mfm8z systemd[1]: Starting MySQL Server...
+12月 10 18:30:30 iz8vbcmllue4daadc7mfm8z systemd[1]: Started MySQL Server.
+[root@iz8vbcmllue4daadc7mfm8z quiztest1]#
+[r
+```
+
+### systemctl daemon-reload
+
+```bash
+systemctl daemon-reload
+
+
+[root@iz8vbcmllue4daadc7mfm8z system]# service mysqld start
+Redirecting to /bin/systemctl start mysqld.service
+Failed to start mysqld.service: Unit not found.
+[root@iz8vbcmllue4daadc7mfm8z system]# systemctl daemon-reload
+[root@iz8vbcmllue4daadc7mfm8z system]# service mysqld start
+Redirecting to /bin/systemctl start mysqld.service
+```
+
+### 重启防火墙
+
+```bash
+systemctl enable iptables.service
+systemctl start iptables.service
+
+```
+
+### native_password
+
+用Seq Pro 连接阿里mysql 的时候，遇到连接不上：`Cannot connect to MySQL 8.0.4 (caching_sha2_password plugin is missing`，需要用非root 用户去连接，并对用户做如下操作：
+
+```mysql
+ALTER USER 'username'@'ip_address' IDENTIFIED WITH mysql_native_password BY 'password';
+```
+
+### Establishing SSL error
+
+用Mysql8 的时候，用密码登陆的时候，遇到`WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6...`，解决
+
+```clojure
+jdbc:mysql://localhost:3306/Peoples?autoReconnect=true&useSSL=false
+
+This will disable SSL and also suppress the SSL errors.
+
+在Clojure 项目的数据库连接配置中，加入useSSL: false
+
+
+(def db-spec
+  {:classname   "com.mysql.jdbc.Driver"
+   :subprotocol "mysql"
+   :subname           "//172.26.158.219:3306/mm"
+   :user        "dev"
+   :password    "devdevdev"
+   :useSSL false})
 ```
 
