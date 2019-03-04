@@ -771,3 +771,46 @@ From code.aliyun.com:cvteam/mngcv
 
 ```
 
+### Git stash
+
+```
+git stash list [<options>]
+git stash show [<stash>]
+git stash drop [-q|--quiet] [<stash>]
+git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+git stash branch <branchname> [<stash>]
+git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+	     [-u|--include-untracked] [-a|--all] [-m|--message <message>]
+	     [--] [<pathspec>…​]]
+git stash clear
+git stash create [<message>]
+git stash store [-m|--message <message>] [-q|--quiet] <commit>
+```
+
+### git rm
+
+取消跟踪某文件，如果有一些`.iml` 或者idea 自动自成的`xml` 文件被提交到了仓库里，可以利用`git rm` 命令去掉跟踪
+
+```
+➜  quiztest1 git:(master) git rm .idea/workspace.xml
+rm '.idea/workspace.xml'
+➜  quiztest1 git:(master) ✗ git rm quiztest1.iml
+rm 'quiztest1.iml'
+➜  quiztest1 git:(master) ✗ gst
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	deleted:    .idea/workspace.xml
+	deleted:    quiztest1.iml
+
+➜  quiztest1 git:(master) ✗ gc -m 'delete xml iml file'
+[master d305faf] delete xml iml file
+ 2 files changed, 1193 deletions(-)
+ delete mode 100644 .idea/workspace.xml
+ delete mode 100644 quiztest1.iml
+➜  quiztest1 git:(master)
+```
+
