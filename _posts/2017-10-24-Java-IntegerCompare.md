@@ -111,3 +111,4 @@ private static class IntegerCache {
 2. **在valueOf方法中有判断传入的参数i，在-128 到 127之间会返回cache的(i + (-low))号元素。**
 3. 可以得出**在-128 到127 之间的数，去取valueOf()方法的值的时候，会直接返回已经cache好了的cache数组中的某个对象。**
 4. high这个值可以配置，sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high")
+

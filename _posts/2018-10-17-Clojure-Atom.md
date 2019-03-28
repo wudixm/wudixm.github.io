@@ -10,17 +10,17 @@ Atoms are an efficient way to represent some state that will never need to be co
 
 (defn memoize [f]
   (let [mem (atom {})]
-    (fn [& args]
-      (if-let [e (find @mem args)]
-        (val e)
-        (let [ret (apply f args)]
-          (swap! mem assoc args ret)
-          ret)))))
+​    (fn [& args]
+​      (if-let [e (find @mem args)]
+​        (val e)
+​        (let [ret (apply f args)]
+​          (swap! mem assoc args ret)
+​          ret)))))
 
 (defn fib [n]
   (if (<= n 1)
-    n
-    (+ (fib (dec n)) (fib (- n 2)))))
+​    n
+​    (+ (fib (dec n)) (fib (- n 2)))))
 
 (time (fib 35))
 user=> "Elapsed time: 941.445 msecs"
@@ -497,3 +497,52 @@ Returns the name String of a string, symbol or keyword.
   (fn [request] (println (name (:request-method request) ) (:uri request) )
   ))
 ```
+
+### ->
+
+```
+->
+clojure.core
+Available since 1.0 (source)
+(-> x & forms)
+Threads the expr through the forms. Inserts x as the
+second item in the first form, making a list of it if it is not a
+list already. If there are more forms, inserts the first form as the
+second item in second form, etc.
+© Rich Hickey. All rights reserved. Eclipse Public License 1.0
+9 EXAMPLES
+link
+;; Use of `->` (the "thread-first" macro) can help make code
+;; more readable by removing nesting. It can be especially
+;; useful when using host methods:
+
+;; Arguably a bit cumbersome to read:
+user=> (first (.split (.replace (.toUpperCase "a b c d") "A" "X") " "))
+"X"
+
+;; Perhaps easier to read:
+user=> (-> "a b c d" 
+           .toUpperCase 
+           (.replace "A" "X") 
+           (.split " ") 
+           first)
+"X"
+
+;; It can also be useful for pulling values out of deeply-nested
+;; data structures:
+user=> (def person 
+            {:name "Mark Volkmann"
+             :address {:street "644 Glen Summit"
+                       :city "St. Charles"
+                       :state "Missouri"
+                       :zip 63304}
+             :employer {:name "Object Computing, Inc."
+                        :address {:street "12140 Woodcrest Dr."
+                                  :city "Creve Coeur"
+                                  :state "Missouri"
+                                  :zip 63141}}})
+ 
+user=> (-> person :employer :address :city)
+"Creve Coeur"
+```
+

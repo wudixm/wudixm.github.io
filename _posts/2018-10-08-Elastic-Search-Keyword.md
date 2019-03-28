@@ -36,3 +36,40 @@ query = {
 
 ```
 
+### 匹配嵌套的值
+
+如果保存的是对象，想匹配对象的某个属性，如存储的doc 是
+
+```
+doc = {
+            'id': model.id,
+            ...
+            'creator': {
+                'user_id': model.user_id,
+                'user_name': user.name,
+                'user_age_zone': user.age_zone,
+                'udid': user.udid,
+                'os': 'iOS' if len(user.udid) == 32 else 'android',
+                'platform': user.platform,
+            },
+            ...
+        }
+```
+
+需要查询creator 里的user_id 匹配的，则查询时用 `creator.user_id` 就可以了，之间用点号连接：
+
+```
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "creator.user_id": 3764284
+        }
+      }
+    }
+  },
+  "size": 2
+}
+```
+

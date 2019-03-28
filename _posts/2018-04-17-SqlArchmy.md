@@ -97,3 +97,14 @@ tbl = App.get_tbl(tbl_name, schema='coloru', db_name='db_search')
         rows = list(stmt.execute())
 ```
 
+### update
+
+```
+tbl = GroupAnnouncement.get_tbl()
+stmt = tbl.update().where(tbl.c.id > 0).values(sticky=GroupAnnouncement.STICK_NO).execute()
+stmt = tbl.update().where(tbl.c.id == group_anc_id).values(sticky=GroupAnnouncement.STICK_YES).execute()
+
+tbl = FilmTemplateHeader.get_tbl()
+stmt = tbl.update().where(tbl.c.id==34).values(vip_template=0).execute()
+```
+
