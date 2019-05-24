@@ -1037,6 +1037,10 @@ M  colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
 ➜  colorv-microservice git:(hot) ✗ gss | sed s/^...//
 colorv-services/src/main/java/com/colorv/hot/DigestLogController.java
 colorv-bot/
+
+
+cat awardsData.js | grep '\[' | grep '\]' | cut -d ':' -f 2 | sed 's/ //g' | sed 's/\[//g'  | sed 's/\]//g'
+
 ```
 
 ### head
@@ -1146,6 +1150,51 @@ $ yum list *ctags*
 
 $ yum install <packagename>
 ```
+找不到tags 文件
+Yes, you should tell Vim where to find your tags file with something like:
+
+```
+:set tags=/path/to/tags
+```
+This is not very optimal, though. This line in your ~/.vimrc should help:
+
+```
+set tags=./tags,tags;$HOME
+```
+It tells Vim to look for a tags file in the directory of the current file, in the current directory and up and up until your $HOME (that's the meaning of the semicolon), stopping on the first hit.
+
+You might also find `set autochdir` useful.
+
+[原文](https://vim.ink/vim-ctag.html)
+
+编程语言中的数据类型、结构体、枚举类型、类、对象、类成员、函数、宏等称为标识符
+
+每个标识符的定义、所在文件中的行位置、所在文件的路径等信息称为标签(tag)。
+
+ctags 全称Exuberant Ctags，是一款著名的用于生成代码标签信息，以便在源文件中定位对象的开源工具，目前已支持C、C++、python等40多种编程语言。
+
+ctags最初内置在vim程序汇总，但随着Vim 6.0的发布，ctags已经脱离Vim成为一个独立的项目。
+
+Vim配合ctags 可以实现更加强大的函数跳转、自动补齐等功能。
+
+一、使用ctags生成tag标签文件实现跳转
+假设当前项目共包含3个源文件：main.cpp、my_class.cpp、my_class.h
+
+在当前目录下执行命令ctags -R就可以生成当前项目所有源文件对应的tag标签文件
+
+Vim ctags
+
+此时，再通过Vim打开当前项目的某个源文件，把光标移动到某个标识符上，通过按键 Ctrl + ] 就可以跳转到对应的定义位置，命令 Ctrl + o 可以回退到原来的位置
+
+如果当前光标下是个局部变量，在Vim命令模式下执行命令 gd 就可以跳转到这个局部变量的定义处
+
+Vim跳转
+
+默认情况下，生成的tags文件必须在vim运行的当前目录才能在vim里面正确跳转
+
+可以在Vim尾行模式或Vim配置文件 .~/.vimrc 中通过以下命令显式地指定tag文件路径：
+
+:set tags+=tags文件路径
 
 ### 查看16 进制文件
 
