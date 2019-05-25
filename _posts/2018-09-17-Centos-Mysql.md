@@ -507,3 +507,54 @@ Performance_schema (run: show engine performance_schema status and look at the l
 InnoDB (run  show engine innodb status and check the buffer pool section, memory allocated for buffer_pool and related caches)
 Temporary tables in RAM (find all in-memory tables by running: select * from information_schema.tables where engine='MEMORY')
 Prepared statements, when it is not deallocated (check the number of prepared commands via deallocate command by running show global status like  'Com_prepare_sql';show global status like 'Com_dealloc_sql')
+
+The good news is, starting with MySQL 5.7, we have memory allocation in performance_schema. Here is how we can use it:
+
+First, we need to enable collecting memory metrics. Run:
+
+UPDATE setup_instruments SET ENABLED = 'YES'
+WHERE NAME LIKE 'memory/%';
+2. Run the report from sys schema:
+
+select event_name, current_alloc, high_alloc
+from sys.memory_global_by_current_bytes
+where current_count > 0;
+3. Usually, this will give you the place in code when memory is allocated. It is usually self-explanatory. In some cases, we can search for bugs or we might need to check the MySQL source code.
+
+For example, for the bug where memory was over-allocated in triggers ( https://bugs.mysql.com/bug.php?id=86821) the select shows:
+
+mysql> select event_name, current_alloc, high_alloc from memory_global_by_current_bytes where current_count > 0;
++--------------------------------------------------------------------------------+---------------+-------------+
+| event_name                                                                     | current_alloc | high_alloc  |
++--------------------------------------------------------------------------------+---------------+-------------+
+| memory/innodb/buf_buf_pool                                                     | 7.29 GiB      | 7.29 GiB    |
+| memory/sql/sp_head::main_mem_root                                              | 3.21 GiB      | 3.62 GiB    |
+...
+The largest chunk of RAM is usually the buffer pool but ~3G in stored procedures seems to be too high.
+
+
+### innodb_buffer_pool_size
+
+Property	Value
+Command-Line Format	--innodb-buffer-pool-size=#
+System Variable	innodb_buffer_pool_size
+Scope	Global
+Dynamic	No
+Type	Integer
+Default Value	134217728
+Minimum Value	5242880
+Maximum Value (64-bit platforms)	2**64-1
+Maximum Value (32-bit platforms)	2**32-1
+The size in bytes of the buffer pool, the memory area where InnoDB caches table and index data. The default value is 134217728 bytes (128MB). The maximum value depends on the CPU architecture; the maximum is 4294967295 (232-1) on 32-bit systems and 18446744073709551615 (264-1) on 64-bit systems. On 32-bit systems, the CPU architecture and operating system may impose a lower practical maximum size than the stated maximum. When the size of the buffer pool is greater than 1GB, setting innodb_buffer_pool_instances to a value greater than 1 can improve the scalability on a busy server.
+
+A larger buffer pool requires less disk I/O to access the same table data more than once. On a dedicated database server, you might set the buffer pool size to 80% of the machine's physical memory size. Be aware of the following potential issues when configuring buffer pool size, and be prepared to scale back the size of the buffer pool if necessary.
+
+Competition for physical memory can cause paging in the operating system.
+
+InnoDB reserves additional memory for buffers and control structures, so that the total allocated space is approximately 10% greater than the specified buffer pool size.
+
+Address space for the buffer pool must be contiguous, which can be an issue on Windows systems with DLLs that load at specific addresses.
+
+The time to initialize the buffer pool is roughly proportional to its size. On instances with large buffer pools, initialization time might be significant.
+
+要是数据机器，可以设置80 机器内存
