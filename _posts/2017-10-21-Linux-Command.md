@@ -1217,5 +1217,7 @@ vim Test.class
 ```
 top -o cpu -s 3
 用cpu 排序，间隔时间3 秒
+
+或者进入top 页面，用M 是内存排序，P 是CPU 排序
 ```
 
