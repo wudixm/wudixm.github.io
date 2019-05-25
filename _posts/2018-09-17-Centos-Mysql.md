@@ -473,3 +473,37 @@ This will disable SSL and also suppress the SSL errors.
    :useSSL false})
 ```
 
+### OOM 处理
+
+[原文](https://dzone.com/articles/what-to-do-when-mysql-runs-out-of-memory-troublesh)
+
+Where to Start Troubleshooting MySQL Memory Leaks
+Here is what we can start with (assuming it is a Linux server):
+
+Part 1: Linux OS and Config Check
+1. Identify the crash by checking MySQL error log and Linux log file (i.e. /var/log/messages or /var/log/syslog). You may see an entry saying that OOM Killer killed MySQL. Whenever MySQL has been killed by OOM "dmesg" also shows details about the circumstances surrounding it.
+
+2. Check the available RAM:
+
+ free -g 
+
+ cat /proc/meminfo 
+
+3. Check what applications are using RAM: “top” or “htop” (see the resident vs virtual memory)
+
+4. Check MySQL configuration: check /etc/my.cnf or in general /etc/my* (including /etc/mysql/* and other files). MySQL may be running with the different my.cnf ( run ps ax| grep mysql )
+
+5. Run  vmstat 5 5 to see if the system is reading/writing via virtual memory and if it is swapping
+
+6. For non-production environments, we can use other tools (like Valgrind, gdb, etc) to examine MySQL usage
+
+Part 2: Checks Inside MySQL
+Now we can check things inside MySQL to look for potential MySQL memory leaks.
+
+MySQL allocates memory in tons of places, especially:
+
+Table cache
+Performance_schema (run: show engine performance_schema status and look at the last line). That may be the cause for the systems with a small amount of RAM, i.e. 1G or less
+InnoDB (run  show engine innodb status and check the buffer pool section, memory allocated for buffer_pool and related caches)
+Temporary tables in RAM (find all in-memory tables by running: select * from information_schema.tables where engine='MEMORY')
+Prepared statements, when it is not deallocated (check the number of prepared commands via deallocate command by running show global status like  'Com_prepare_sql';show global status like 'Com_dealloc_sql')
