@@ -108,3 +108,12 @@ tbl = FilmTemplateHeader.get_tbl()
 stmt = tbl.update().where(tbl.c.id==34).values(vip_template=0).execute()
 ```
 
+
+### distinct
+
+```
+        tbl = GroupActivity.get_tbl()
+        stmt = tbl.select().distinct(tbl.c.obj_id).where(tbl.c.status==GroupActivity.ON_DUTY).order_by(tbl.c.rank.desc())
+        ret = list(stmt.execute())
+
+```
