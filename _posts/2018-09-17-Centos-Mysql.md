@@ -557,4 +557,91 @@ Address space for the buffer pool must be contiguous, which can be an issue on W
 
 The time to initialize the buffer pool is roughly proportional to its size. On instances with large buffer pools, initialization time might be significant.
 
-要是数据机器，可以设置80 机器内存
+要是数据机器，可以设置80% 机器内存
+
+### 慢查询
+
+#### 查询状态
+
+执行如下，查看结果，slow_launch_time=# 表示如果建立线程花费了比这个值更长的时间,slow_launch_threads 计数器将增加
+```
+show VARIABLES like "slow%";
+
+    slow_launch_time	2
+    slow_query_log	ON
+    slow_query_log_file	/var/lib/mysql/mysql-slow.log
+
+show variables like "long%"; 慢查询时间阈值
+
+    long_query_time	1.000000
+```
+
+
+#### 设置开启慢查询
+```
+set global slow_query_log = ON;
+```
+
+#### 设置时间阈值
+```
+mysql> show variables like 'long%';
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> set long_query_time=1;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
+### explain 
+
+```
+explain select * from cv_user_obs where id=11174736
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	cv_user_obs	NULL	const	PRIMARY	PRIMARY	4	const	1	100.00	NULL
+
+
+explain select * from cv_user_obs where name=11174736
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	cv_user_obs	NULL	ALL	ix_cv_user_obs_name	NULL	NULL	NULL	14142318	10.00	Using where
+
+```
+
+EXPLAIN字段：
+
+- Table：显示这一行的数据是关于哪张表的
+
+- possible_keys：显示可能应用在这张表中的索引。如果为空，没有可能的索引。可以为相关的域从WHERE语句中选择一个合适的语句
+
+- key：实际使用的索引。如果为NULL，则没有使用索引。MYSQL很少会选择优化不足的索引，此时可以在SELECT语句中使用USE INDEX（index）来强制使用一个索引或者用IGNORE INDEX（index）来强制忽略索引
+
+- key_len：使用的索引的长度。在不损失精确性的情况下，长度越短越好
+
+- ref：显示索引的哪一列被使用了，如果可能的话，是一个常数
+
+- rows：MySQL认为必须检索的用来返回请求数据的行数
+
+- type：这是最重要的字段之一，显示查询使用了何种类型。从最好到最差的连接类型为system、const、eq_reg、ref、range、index和ALL
+
+   - system、const：可以将查询的变量转为常量.  如id=1; id为 主键或唯一键.
+   - eq_ref：访问索引,返回某单一行的数据.(通常在联接时出现，查询使用的索引为主键或惟一键)
+   - ref：访问索引,返回某个值的数据.(可以返回多行) 通常使用=时发生
+   - range：这个连接类型使用索引返回一个范围中的行，比如使用>或< 查找东西，并且该字段上建有索引时发生的情况(注:不一定好于index)
+   - index：以索引的顺序进行全表扫描，优点是不用排序,缺点是还要全表扫描
+   - ALL：全表扫描，应该尽量避免
+
+- Extra：关于MYSQL如何解析查询的额外信息，主要有以下几种
+
+   - using index：只用到索引,可以避免访问表. 
+   - 
+   - using where：使用到where来过虑数据. 不是所有的where clause都要显示using where. 如以=方式访问索引.
+   - 
+   - using tmporary：用到临时表
+   - 
+   - using filesort：用到额外的排序. (当使用order by v1,而没用到索引时,就会使用额外的排序)
+   - 
+   - range checked for eache record(index map:N)：没有好的索引.
