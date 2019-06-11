@@ -546,3 +546,13 @@ user=> (-> person :employer :address :city)
 "Creve Coeur"
 ```
 
+### do 
+
+用do 可以扩展if 的执行语句
+```
+(if (> 2 1)
+            (do
+            (print "2 greater than 1") ; with 'do' you can extend if block
+            true))
+```
+
