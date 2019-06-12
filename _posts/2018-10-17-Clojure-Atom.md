@@ -556,3 +556,85 @@ user=> (-> person :employer :address :city)
             true))
 ```
 
+### macro1
+
+[原文](http://yangyang.ninja/clojure/2015/06/30/step-by-step-macro.html)
+
+
+总结
+宏可以返回一个未被求值的clojure表达式。*
+
+你可以使用语法引用返回带命名空间的绑定变量，并且可以使用反引用来对引用中的变量进行求值*
+
+你可以使用list 以及原始引用（quote)组装未被求值的clojure表达式，但是会引入额外的开销即过多的quote.*
+
+宏的内容中只会返回一个表达式，所以如果要想在宏中返回多个form，那么请用do把这些表达式包装起来，如前例。*
+
+展开反引用(~@)可以用来阻止多表达式求值，达到字面替换的目的。在有多语句需要执行的场景下很有用*
+
+### macro2 
+
+[原文](https://www.bookstack.cn/read/clojure-learning-notes/getting-started-macro.md)
+#### Quote
+##### Simple Quoting
+如果我们仅仅想得到一个没有evaluated的symbol，我们可以使用quote:
+
+```
+user=> (+ 1 2)
+3
+user=> (quote (+ 1 2))
+(+ 1 2)
+user=> '(+ 1 2)
+(+ 1 2)
+user=> '123
+123
+user=> 123
+123
+user=> 'hello
+hello
+user=> hello
+CompilerException java.lang.RuntimeException: Unable to resolve symbol: hello in this context
+```
+##### Syntax Quoting
+在前面，我们通过'以及quote了解了simple quoting，Clojure还提供了syntax quoting ```
+
+```
+user=> `1
+1
+user=> `+
+clojure.core/+
+user=> '+
++
+```
+可以看到，syntax quoting会返回fully qualified symbol，所以使用syntax quoting能够让我们避免命名冲突。
+
+另一个syntax quoting跟simple quoting不同的地方在于，我们可以在syntax quoting里面使用~来unquote一些form，这等于是说，我要quote这一个expression，但是这个expression里面某一个form先evaluate，譬如:
+
+```
+user=> `(+ 1 ~(inc 1))
+(clojure.core/+ 1 2)
+user=> `(+ 1 (inc 1))
+(clojure.core/+ 1 (clojure.core/inc 1))
+```
+这里还需要注意一下unquote splicing:
+
+```
+user=> `(+ ~(list 1 2 3))
+(clojure.core/+ (1 2 3))
+user=> `(+ ~@(list 1 2 3))
+(clojure.core/+ 1 2 3)
+```
+syntax quoting会让代码更加简洁，具体到前面print那个例子，我们let这些都加了quote，代码看起来挺丑陋的，如果用syntax quoting，如下:
+
+```clojure
+user=> (defmacro my-print2
+  #_=> [expression]
+  #_=> `(let [result# ~expression]
+  #_=> (println result#)
+  #_=> result#))
+#'user/my-print2
+user=> (my-print2 1)
+1
+1
+```
+
