@@ -638,3 +638,127 @@ user=> (my-print2 1)
 1
 ```
 
+宏(Macro)
+宏是在读入期（而不是编译期）就进行实际代码替换的一个机制。
+
+反引号(`)
+防止宏体内的任何一个表达式被evaluate。这意味着宏体里面的代码会原封不动地替换到使用这个宏的所有的地方 – 除了以波浪号开始的那些表达式。
+
+~和~@
+当一个名字前面被加了一个波浪号，并且还在反引号里面，它的值会被替换的。如果这个名字代表的是一个序列，那么我们可以用 ~@ 来替换序列里面的某个具体元素。
+
+id#
+在一个标识符背后加上 # 意味着生成一个唯一的symbol, 比如 foo# 实际可 能就是 foo_004 可以看作是let与gensym的等价物,这在避免符号捕捉时很有用。
+
+### 什么时候用宏macro?
+
+[原文](https://lispcast.com/when-to-use-a-macro/)
+
+Clojure macros do have their uses, but why should you avoid them if possible? The principle reason is that macros are not first-class in Clojure. You cannot access them at runtime. You cannot pass them as an argument to a function, nor do any of the other powerful stuff you’ve come to love from functional programming. In short, macros are not functional programming (though they can make use of it).
+
+A function, on the other hand, is a first-class value, and so is available for awesome functional programming constructs. You should prefer functions to macros.
+
+That said, macros are still useful because there are things macros can do that functions cannot. What are the powers of a macro that are unavailable to any other construct in Clojure? If you need any of these abilities, write a macro.
+
+#### 1. THE CODE HAS TO RUN AT COMPILE TIME
+There are just some things that need to happen at compile time. I recently wrote a macro that returns the hash of the current git commit so that the hash can be embedded in the ClojureScript compilation. This needs to be done at compile time because the script will be run somewhere else, where it cannot get the commit hash. Another example is performing expensive calculations at compile time as an optimization.
+
+Example:
+
+(defmacro build-time []
+  (str (java.util.Date.)))
+The build-time macro returns a String representation of the time it is run.
+
+Running code at compile time is not possible in anything other than macros.
+
+#### 2. YOU NEED ACCESS TO UNEVALED ARGUMENTS
+Macros are useful for writing new, convenient syntactic constructs. And when we talk about syntax, we are typically talking about raw, unevaluated sexpressions.
+
+Example:
+
+(defmacro when
+  "Evaluates test. If logical true, evaluates body in an implicit do."
+  {:added "1.0"}
+  [test & body]
+  (list 'if test (cons 'do body)))
+clojure.core/when is a syntactic sugar macro which transforms into an if with a do for a then and no else. The body should not be evaled before the test is checked.
+
+Getting access to the unevaluated arguments is available by quoting (' or (quote ...)), but that is often unacceptable for syntactic constructs. Macros are the only way to do that.
+
+#### 3. YOU NEED TO EMIT INLINE CODE
+Sometimes calling a function is unacceptable. That call is either too expensive or is otherwise not the behavior you want.
+
+For instance, in Javascript in the browser, you can call console.log('msg') to print out a message and the line number to the console. In ClojureScript, this becomes something like this: (.log js/console "msg"). Not convenient at all. My first thought was to create a function.1
+
+(defn log [msg]
+  (.log js/console msg))
+This worked alright for printing the message, but the line numbers were all pointing to the same line: the body of the function! console.log records the line exactly where it is called, so it needs to be inline. I replaced it with a macro, which highlights its purpose as syntactic sugar.
+
+Example:
+
+(defmacro log [msg]
+  `(.log js/console ~msg))
+The body replaces the call to log, so it is located where it is needed for the proper behavior.
+
+If you need inline code, a macro is the only way.
+
+OTHER CONSIDERATIONS
+Of course, any combination of these is also acceptable. And don’t forget that although you might need a macro, macros are only available at compile time. So you should consider providing a function that does the same thing and then wrap it with a macro.
+
+CONCLUSION
+Macros are very powerful. Their power comes with a price: they are only available at compile time. Because of that, functions should be preferred to macros. The use of macros should be reserved for those special occasions when their power is needed.
+
+
+### symbol and var
+[原文](https://stackoverflow.com/questions/9113387/difference-between-symbols-and-vars-in-clojure/9114529)
+
+There's a symbol + that you can talk about by quoting it:
+
+user=> '+
++
+user=> (class '+)
+clojure.lang.Symbol
+user=> (resolve '+)
+#'clojure.core/+
+So it resolves to #'+, which is a Var:
+
+user=> (class #'+)
+clojure.lang.Var
+The Var references the function object:
+
+user=> (deref #'+)
+#<core$_PLUS_ clojure.core$_PLUS_@55a7b0bf>
+user=> @#'+
+#<core$_PLUS_ clojure.core$_PLUS_@55a7b0bf>
+(The @ sign is just shorthand for deref.) Of course the usual way to get to the function is to not quote the symbol:
+
+user=> +
+#<core$_PLUS_ clojure.core$_PLUS_@55a7b0bf>
+Note that lexical bindings are a different mechanism, and they can shadow Vars, but you can bypass them by referring to the Var explicitly:
+
+user=> (let [+ -] [(+ 1 2) (@#'+ 1 2)])
+[-1 3]
+In that last example the deref can even be left out:
+
+user=> (let [+ -] [(+ 1 2) (#'+ 1 2)])
+[-1 3]
+This is because Var implements IFn (the interface for Clojure functions) by calling deref on itself, casting the result to IFn and delegating the function call to that.
+
+The visibility mechanism used when you define private functions with defn- is based on metadata on the symbol. You can bypass it by referring directly to the Var, as above:
+
+user=> (ns foo)
+nil
+foo=> (defn- private-function [] :secret)
+#'foo/private-function
+foo=> (in-ns 'user)
+#<Namespace user>
+user=> (foo/private-function)
+java.lang.IllegalStateException: var: #'foo/private-function is not public (NO_SOURCE_FILE:36)
+user=> (#'foo/private-function)
+:secret
+
+### 在repl 里加入当前ns
+
+```
+(ns forum.topic.util.topic-util-redis)
+```
