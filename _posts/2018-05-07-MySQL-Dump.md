@@ -28,6 +28,11 @@ root@mng-68:/data5/hoytwu/newScene/holdsDump#
  mysql -u dev -psynergyinfo dmgr < dmgr.sql
 mysql: [Warning] Using a password on the command line interface can be insecure.
 
+
+mysql -uroot -p 数据库名< C:/Users/backup/数据库名.sql
+
+
+mysql -h127.0.0.1 -P13310 -u dev -psynergyinfo workroom < cv_photo_filter_obs.sql
 ```
 
 ### 执行文件
