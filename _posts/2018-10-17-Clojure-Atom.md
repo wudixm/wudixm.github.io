@@ -762,3 +762,20 @@ user=> (#'foo/private-function)
 ```
 (ns forum.topic.util.topic-util-redis)
 ```
+
+### clojure redis doc
+```
+(use 'clojure.repl)
+(doc car/sort)
+=> "SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]] [ASC|DESC] [ALPHA] [STORE destination]
+
+Sort the elements in a list, set or sorted set.
+
+Available since: 1.0.0.
+
+Time complexity: O(N+M*log(M)) where N is the number of elements in the list or set to sort, and M the number of returned elements. When the elements are not sorted, complexity is currently O(N) as there is a copy step that will be avoided in next releases."
+```
+
+### contains
+contains? checks whether the index (0, 1, 2, etc.) exists in the collection.
+
