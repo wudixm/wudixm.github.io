@@ -12,3 +12,4 @@
 12. `2df"` Delete from cursor to find the 2nd quote mark. This is inclusive so it will delete the second quote. This is a handy command for deleting attributes in html if your cursor is on the first letter of the attribute. // class="test" style="fda" 
 13. `:12,54=` Format lines 12 through 54.
 14. `:h i_CTRL-R` Opens vim help to documentation on pressing control and r while in insert mode.
+15. `:r !tree` Pastes in the output from running tree on a directory.
