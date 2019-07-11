@@ -994,6 +994,7 @@ curl -H "Content-Type:application/json" -X POST -d 'json data' URL
 
 curl -H "Content-Type:application/json" -X POST -d '{"user": "admin", "passwd":"12345678"}' http://127.0.0.1:8000/login
 
+**注意：linux 下，curl 后面的& 连接多个参数，会被当做后台运行，所以要对& 符号转义：curl http://10.244.12.209:6000/node?page=1\&user_id=11174736
 ```
 
 ### cut
