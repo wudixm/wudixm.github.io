@@ -13,3 +13,8 @@
 13. `:12,54=` Format lines 12 through 54.
 14. `:h i_CTRL-R` Opens vim help to documentation on pressing control and r while in insert mode.
 15. `:r !tree` Pastes in the output from running tree on a directory.
+16. `gq` Format selected text.
+17. `gn` Grab the next match from last search and visually select it.
+18. `"*p` Pastes in text from your system clipboard.
+19. `gv` Reselect last visual selection.
+20. `/^}` Forward search for closing bracket of a css class, if the css class is closed at the beginning of a new line i.e.
