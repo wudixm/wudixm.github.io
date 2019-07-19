@@ -18,3 +18,4 @@
 18. `"*p` Pastes in text from your system clipboard.
 19. `gv` Reselect last visual selection.
 20. `/^}` Forward search for closing bracket of a css class, if the css class is closed at the beginning of a new line i.e.
+21. `dl` Delete character under cursor. Same as x.
