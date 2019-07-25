@@ -21,3 +21,7 @@
 21. `dl` Delete character under cursor. Same as x.
 22. `4i<tab><escape>` Insert 4 tabs (leaves you in command mode, not insert mode).
 23. `:r !ls` Pastes in the output of ls. ! calls an external process in vim. So this can be pretty userful.
+24. `:ea 14h 30m` jump to 14 hours and 30 minutes ago. Ok you get the point.
+25. `gi` Go into insert mode at the end of the last insert you did.
+26. `12>>` Indent 12 lines including the line you are on.
+27. `:12,42wq` saves lines 12 to 42 and quits file.
