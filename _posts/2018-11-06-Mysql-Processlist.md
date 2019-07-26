@@ -5,6 +5,7 @@
 ### 查看mysql 当前连接数（进程数）
 
 用的命令是`show processlist;`：
+也可以用`show full processlist;`
 
 ```
 mysql> show processlist;
