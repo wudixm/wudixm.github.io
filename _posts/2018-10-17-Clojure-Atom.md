@@ -779,3 +779,33 @@ Time complexity: O(N+M*log(M)) where N is the number of elements in the list or 
 ### contains
 contains? checks whether the index (0, 1, 2, etc.) exists in the collection.
 
+### ns
+
+```clojure
+(ns forum.common.util.db)
+```
+
+### vector to map
+
+```
+a = ["like_count"
+ "0"
+ "user_id"
+ "11174736"
+ "timestamp"
+ "1565233068"
+ "name"
+ "title3"
+ "comment_count"
+ "0"
+ "description"
+ "content3"]
+
+ (apply hash-map a)
+ {"like_count" "0",
+ "user_id" "11174736",
+ "timestamp" "1565233068",
+ "name" "title3",
+ "comment_count" "0",
+ "description" "content3"}
+```
