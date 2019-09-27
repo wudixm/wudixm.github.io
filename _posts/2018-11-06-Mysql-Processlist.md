@@ -27,6 +27,26 @@ mysql> show processlist;
 | 94 | root            | localhost | NULL | Query   |      0 | starting               | show processlist |
 +----+-----------------+-----------+------+---------+--------+------------------------+------------------+
 2 rows in set (0.00 sec)
+
+
+-- 查询非 Sleep 状态的链接，按消耗时间倒序展示，自己加条件过滤
+select id, db, user, host, command, time, state, info
+from information_schema.processlist
+where command != 'Sleep'
+order by time desc 
+
+select concat('kill ', id, ';'), id, User, Host, db, Command, Time, state, info
+from information_schema.processlist
+where command != 'Sleep'
+and time > 2*60
+order by time desc 
+
+
+kill 4;	4	event_scheduler	localhost	NULL	Daemon	24181414	Waiting on empty queue	NULL
+kill 3371812;	3371812	repl	10.111.1.28:53854	NULL	Binlog Dump	2753016	Master has sent all binlog to slave; waiting for more updates	NULL
+kill 4329172;	4329172	dev	10.111.1.48:42510	coloru	Query	166	Creating sort index	SELECT coloru.cv_quan_feeds.id, coloru.cv_quan_feeds.user_id, coloru.cv_quan_feeds.target_type_option, coloru.cv_quan_feeds.object_id, coloru.cv_quan_feeds.created_at, coloru.cv_quan_feeds.properties, coloru.cv_quan_feeds.info ↵FROM coloru.cv_quan_feeds ↵WHERE coloru.cv_quan_feeds.user_id IN (XXXXX) AND coloru.cv_quan_feeds.target_type_option = 708 ORDER BY coloru.cv_quan_feeds.id DESC ↵ LIMIT 1
+kill 4330987;	4330987	dev	10.111.1.162:49016	coloru	Query	134	Creating sort index	SELECT coloru.cv_quan_feeds.id, coloru.cv_quan_feeds.user_id, coloru.cv_quan_feeds.target_type_option, coloru.cv_quan_feeds.object_id, coloru.cv_quan_feeds.created_at, coloru.cv_quan_feeds.properties, coloru.cv_quan_feeds.info ↵FROM coloru.cv_quan_feeds ↵WHERE coloru.cv_quan_feeds.user_id IN (XXXXX) AND coloru.cv_quan_feeds.target_type_option = 708 ORDER BY coloru.cv_quan_feeds.id DESC ↵ LIMIT 1
+
 ```
 
 ### 第二种方法

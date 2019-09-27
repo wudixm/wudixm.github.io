@@ -1025,6 +1025,13 @@ or write it like this:
 cut -f2 -d$'\t' infile
 
 ```
+cut 和grep 同时用的时候，有缓存问题
+
+cotilla@mng-30:/data1/logs/containers$ tail -f  k8s_cv.link  | grep --line-buffered null | grep --line-buffered items  | cut -d ':' -f 1-
+2019-08-06 11:53:44 [19] [INFO] >>> return items null for uid 7983314 length = 20
+
+[原文](https://blog.jpalardy.com/posts/grep-and-output-buffering/)
+grep 要加上参数 --line-buffered 取消缓存
 
 ### sed
 
@@ -1136,6 +1143,15 @@ sys
 ```
 -F指定域分隔符为':'。     {print $1}输出第一列
 
+```python
+F.debug_msg("return items null for uid " + str(uid) + " length = " + str(self.length)) # python 打印
+```
+
+```sh
+awk '$n ~ /items null/ {print $11}' k8s_cv.link 
+把uid 都打印出来
+```
+
 ### ctags
 
 ```
@@ -1222,3 +1238,8 @@ top -o cpu -s 3
 或者进入top 页面，用M 是内存排序，P 是CPU 排序
 ```
 
+### less 
+
+不换行
+
+less -S a.txt

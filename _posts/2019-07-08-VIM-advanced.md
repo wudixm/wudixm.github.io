@@ -25,3 +25,4 @@
 25. `gi` Go into insert mode at the end of the last insert you did.
 26. `12>>` Indent 12 lines including the line you are on.
 27. `:12,42wq` saves lines 12 to 42 and quits file.
+28. `"2p` This will paste in text from the second register. You will use this all of the time. Most useful when you delete something you want to paste, then delete something else. Move to the place where you want to paste text, hit p and go “doh”. Just remember "2p.

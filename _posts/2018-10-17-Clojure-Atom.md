@@ -809,3 +809,13 @@ a = ["like_count"
  "comment_count" "0",
  "description" "content3"}
 ```
+
+apply 方法：
+
+```clojure
+;  (apply f args)(apply f x args)(apply f x y args)(apply f x y z args)(apply f a b c d & args)
+;  Applies fn f to the argument list formed by prepending intervening arguments to args.
+; Note the equivalence of the following two forms
+(apply str ["str1" "str2" "str3"])  ;;=> "str1str2str3"
+(str "str1" "str2" "str3")          ;;=> "str1str2str3"
+```
