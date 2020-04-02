@@ -26,3 +26,7 @@
 26. `12>>` Indent 12 lines including the line you are on.
 27. `:12,42wq` saves lines 12 to 42 and quits file.
 28. `"2p` This will paste in text from the second register. You will use this all of the time. Most useful when you delete something you want to paste, then delete something else. Move to the place where you want to paste text, hit p and go “doh”. Just remember "2p.
+29. `:%g/^\d/norm yyGp` This searches for all lines of a file that start with a digit as the first character. It then copies the line and pastes it at the bottom of the file.
+30. `gv` Selects the previous visual.
+31. `v_o` Goes to the other end of the visual block. Useful if you started one line too low or something. In block mode, it goes to the opposite diagonal corner: use v_O to go to the opposite horizontal corner..
+32. `g ctrl-A / ctrl-X` In visual mode, ctrl-A just increments the first number on every line. g ctrl-A, on the other hand, will bump the increment by one for each matching line. 

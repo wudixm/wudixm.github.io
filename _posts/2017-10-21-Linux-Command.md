@@ -204,6 +204,21 @@ Enter passphrase for .ssh/id_rsa: hoytwu
 Identity added: .ssh/id_rsa (.ssh/id_rsa)
 ```
 
+### autossh 
+
+在本地的13308 端口监听是否要重新连接，实际连接的还是13306 端口上
+autossh -M 18812 -fN -L 13312:10.111.1.58:3312 cotilla@mng-39
+autossh -M 18806 -fN -L 13306:10.111.1.51:3306 cotilla@mng-39
+autossh -M 18810 -fN -L 13310:10.111.1.58:3317 cotilla@mng-39
+
+ssh 常用的参数
+-f 后台执行ssh指令
+-C 允许压缩数据
+-N 不执行远程指令
+-R 将远程主机(服务器)的某个端口转发到本地端指定机器的指定端口
+-L 将本地机(客户机)的某个端口转发到远端指定机器的指定端口
+-p 指定远程主机的端口
+
 
 
 ### 查看端口占用

@@ -814,3 +814,11 @@ Changes to be committed:
 ➜  quiztest1 git:(master)
 ```
 
+### revert
+
+```
+➜  cv git:(master) git revert 7b99d379b8148d66fad98ddac3b80da72337d11d
+[master 79abab9eed] Revert "add quality topics"
+ 5 files changed, 12 insertions(+), 54 deletions(-)
+➜  cv git:(master) gl
+```

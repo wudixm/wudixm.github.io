@@ -117,3 +117,11 @@ stmt = tbl.update().where(tbl.c.id==34).values(vip_template=0).execute()
         ret = list(stmt.execute())
 
 ```
+
+### delete
+
+```
+        tbl = GroupZoneItem.get_tbl()
+        tbl.delete().where(tbl.c.obj_kind == obj_kind).where(tbl.c.obj_id == obj_id).execute()
+```
+
