@@ -1258,3 +1258,7 @@ top -o cpu -s 3
 不换行
 
 less -S a.txt
+
+### sort
+
+zcat report_video.log.20200508_* | grep is_creat | grep after  |  awk -F 'group_id' '{print $2}' | cut -d '"' -f 3 | sort | uniq -c | sort -nr > tempwxm.txt

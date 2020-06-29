@@ -205,3 +205,74 @@ MyISM使用的是非聚簇索引，非聚簇索引的两棵B+树看上去没什�
 
 mysql中聚簇索引的设定
 聚簇索引默认是主键，如果表中没有定义主键，InnoDB 会选择一个唯一的非空索引代替。如果没有这样的索引，InnoDB 会隐式定义一个主键来作为聚簇索引。InnoDB 只聚集在同一个页面中的记录。包含相邻健值的页面可能相距甚远。
+
+### 联合索引
+
+```
+explain SELECT * FROM table_item WHERE user_id = 2 ORDER BY item_id LIMIT 0, 5
+```
+
+如果user_id 和item_id 分别都有单独的索引，那么，这块还是比较慢，会`Using where; Using filesort`
+所以最好建立一个(user_id, item_id) 的联合索引
+
+1. 一条 SQL 语句只能使用 1 个索引 (5.0-)，MySQL 根据表的状态，选择一个它认为最好的索引用于优化查询
+2. 联合索引，只能按从左到右的顺序依次使用
+
+MySQL 选择了 user_id，那么 item_id 的索引没有起到任何用处
+修改表结构，删除 user_id 和 item_id 的 INDEX 索引，建立一个名为 user_item 的联合 UNIQUE 索引，顺序是先 user_id 后 item_id，再 EXPLAIN，这回只有 Using where 了。
+
+首先，只有在order by 数据列的时候才会出现using filesort，而且如果你不对进行order by的这一列设置索引的话，无论列值是否有相同的都会出现using filesort。因此，只要用到order by 的这一列都应该为其建立一个索引。
+```
+SELECT * FROM DB.TB WHERE ID=2000010000 AND FID IN (9,8,3,13,38,40) ORDER BY INVERSE_DATE LIMIT 0, 5
+```
+里面建立的索引为一个三列的多列索引：IDX（ID,FID ,INVERSE_DATE） 。INVERSE_DATE这个是时间的反向索引。
+对于这个sql我当时最开始认为应该是个优化好的状态，应该没有什么纰漏了，结果一explain才发现竟然出现了：Using where; Using filesort。
+汗。。。为什么呢，后来经过分析才得知，原来在多列索引在建立的时候是以B-树结构建立的，因此建立索引的时候是先建立ID的按顺序排的索引，在相同ID的情况下建立FID按 顺序排的索引，最后在FID 相同的情况下建立按INVERSE_DATE顺序排的索引，如果列数更多以此类推。有了这个理论依据我们可以看出在这个sql使用这个IDX索引的时候只是用在了order by之前，order by INVERSE_DATE 实际上是using filesort出来的。。汗死了。。因此如果我们要在优化一下这个sql就应该为它建立另一个索引IDX（ID,INVERSE_DATE），这样就消除了using filesort速度也会快很多。。问题终于解决了。。- -！
+
+
+1）explain select id from course where category_id>1 order by category_id;
+
+根据最左前缀原则，order by后面的的category_id会用到组合索引
+
+（2）explain select id from course where category_id>1 order by category_id,buy_times;
+
+根据最左前缀原则，order by后面的的category_id buy_times会用到组合索引，因为索引就是这两个字段
+
+（3）explain select id from course where category_id>1 order by buy_times;
+
+根据最左前缀原则，order by后面的字段是缺少了最左边的category_id，所以会产生 using filesort
+
+（4）explain select id from course where category_id>1 order by buy_times,category_id;
+
+order by后面的字段顺序不符合组合索引中的顺序，所以order by后面的不会走索引，即会产生using filesort
+
+（5）explain select id from course order by category_id;
+
+根据最左前缀原则，order by后面存在索引中的最左列，所以会用到索引
+
+（6）explain select id from course order by buy_times;
+
+根据最左前缀原则，order by后面的字段 没有索引中的最左列的字段，所以不会走索引，会产生using filesort
+
+（7）explain select id from course where buy_times > 1 order by buy_times;
+
+根据最左前缀原则，order by后面的字段 没有索引中的最左列的字段，所以不会走索引，会产生using fillesort
+
+（8）explain select id from course where buy_times > 1 order by category_id;
+
+根据最左前缀原则，order by后面的字段存在于索引中最左列，所以会走索引
+
+（9）explain select id from course order by buy_times desc,category_id asc;
+
+根据最最左前缀原则，order by后面的字段顺序和索引中的不符合，则会产生using filesort
+
+（10）explain select id from course order by category_id desc,buy_times asc;
+
+这一条虽然order by后面的字段和索引中字段顺序相同，但是一个是降序，一个是升序，所以也会产生using filesort，同时升序和同时降序就不会产生using filesort了
+
+总结：终上所述，（3）（4）（6）（7）（9）（10）都会产生using filesort.
+
+作者：码咖
+链接：https://www.jianshu.com/p/85a4d7b3e5c0
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
