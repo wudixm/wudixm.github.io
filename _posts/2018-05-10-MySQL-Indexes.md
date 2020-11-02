@@ -272,7 +272,30 @@ order by后面的字段顺序不符合组合索引中的顺序，所以order by�
 
 总结：终上所述，（3）（4）（6）（7）（9）（10）都会产生using filesort.
 
-作者：码咖
-链接：https://www.jianshu.com/p/85a4d7b3e5c0
+
+### COLLATE=utf8mb4_0900_ai_ci
+
+所谓utf8_unicode_ci，其实是用来排序的规则。对于mysql中那些字符类型的列，如VARCHAR，CHAR，TEXT类型的列，都需要有一个COLLATE类型来告知mysql如何对该列进行排序和比较。简而言之，COLLATE会影响到ORDER BY语句的顺序，会影响到WHERE条件中大于小于号筛选出来的结果，会影响**DISTINCT**、**GROUP BY**、**HAVING**语句的查询结果。另外，mysql建索引的时候，如果索引列是字符类型，也会影响索引创建，只不过这种影响我们感知不到。总之，凡是涉及到字符类型比较或排序的地方，都会和COLLATE有关。
+
+mysql中有utf8和utf8mb4两种编码，在mysql中请大家忘记**utf8**，永远使用**utf8mb4**。这是mysql的一个遗留问题，mysql中的utf8最多只能支持3bytes长度的字符编码，对于一些需要占据4bytes的文字，mysql的utf8就不支持了，要使用utf8mb4才行。
+
+很多COLLATE都带有_ci字样，这是Case Insensitive的缩写，即大小写无关，也就是说"A"和"a"在排序和比较的时候是一视同仁的。selection * from table1 where field1="a"同样可以把field1为"A"的值选出来。与此同时，对于那些_cs后缀的COLLATE，则是Case Sensitive，即大小写敏感的。
+
+在mysql中使用show collation指令可以查看到mysql所支持的所有COLLATE。以utf8mb4为例，该编码所支持的所有COLLATE如下图所示。
+
+从mysql 8.0开始，mysql默认的CHARSET已经不再是Latin1了，改为了utf8mb4，并且默认的COLLATE也改为了utf8mb4_0900_ai_ci。utf8mb4_0900_ai_ci大体上就是unicode的进一步细分，0900指代unicode比较算法的编号（ Unicode Collation Algorithm version），ai表示accent insensitive（发音无关），例如e, è, é, ê 和 ë是一视同仁的。
+
+设置COLLATE可以在示例级别、库级别、表级别、列级别、以及SQL指定。实例级别的COLLATE设置就是mysql配置文件或启动指令中的collation_connection系统变量。
+
+库级别设置COLLATE的语句如下：
+
+```mysql
+CREATE DATABASE <db_name> DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+如果库级别没有设置CHARSET和COLLATE，则库级别默认的CHARSET和COLLATE使用实例级别的设置。在mysql8.0以下版本中，你如果什么都不修改，默认的CHARSET是Latin1，默认的COLLATE是latin1_swedish_ci。从mysql8.0开始，默认的CHARSET已经改为了utf8mb4，默认的COLLATE改为了utf8mb4_0900_ai_ci。
+
+作者：老男孩_Misaya
+链接：https://www.jianshu.com/p/f8707b8461d3
 来源：简书
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

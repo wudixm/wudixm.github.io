@@ -53,6 +53,13 @@ stmt = tbl_a.select() \
 stmt = stmt.order_by(tbl_a.c.ranking.asc())
 obs = list(stmt.execute())
 
+group_tbl = Groups.get_tbl()
+relation_tbl = GroupCategoryRelation.get_tbl()
+j = join(group_tbl, relation_tbl, group_tbl.c.id == relation_tbl.c.group_id)
+stmt = select([group_tbl.c.id]).select_from(j).where(relation_tbl.c.category_id == category_id). \
+    order_by(group_tbl.c.active_point.desc()).limit(100)
+ret = list(stmt.execute())
+
 
 
 city_obj = City.get_clz_obj(nation=nation, state=state, city=city)

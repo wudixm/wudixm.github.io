@@ -30,3 +30,4 @@
 30. `gv` Selects the previous visual.
 31. `v_o` Goes to the other end of the visual block. Useful if you started one line too low or something. In block mode, it goes to the opposite diagonal corner: use v_O to go to the opposite horizontal corner..
 32. `g ctrl-A / ctrl-X` In visual mode, ctrl-A just increments the first number on every line. g ctrl-A, on the other hand, will bump the increment by one for each matching line. 
+33. `:vert[ical] ` 后面可接各种命令，`:vertical` works with any command that splits a window, `:vert term`，

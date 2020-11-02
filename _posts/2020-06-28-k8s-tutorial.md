@@ -379,3 +379,27 @@ start a bash session in the Pod’s container:
 ```sh
 kubectl exec -ti $POD_NAME bash
 ```
+
+## Services
+
+pod 有生命周期，一个node down 了，上面的所有pod 都没了。
+
+each Pod in a Kubernetes cluster has a unique IP address, even Pods on the same Node, so there needs to be a way of automatically reconciling changes among Pods so that your applications continue to function.
+
+集群里的每个pod 都有一个唯一ip，在同一个node 上的pod ip也不同
+
+A Service in Kubernetes is an abstraction which defines a logical set of Pods and a policy by which to access them. Services enable a loose coupling between dependent Pods. A Service is defined using YAML (preferred) or JSON, like all Kubernetes objects. The set of Pods targeted by a Service is usually determined by a LabelSelector
+
+Service 定义了一个逻辑pod 集合和一个协议，这个协议可以用来访问pod 集合。
+
+Although each Pod has a unique IP address, those IPs are not exposed outside the cluster without a Service. Services allow your applications to receive traffic. Services can be exposed in different ways by specifying a type in the ServiceSpec:
+- ClusterIP (default) - Exposes the Service on an internal IP in the cluster. This type makes the Service only reachable from within the cluster.
+- NodePort - Exposes the Service on the same port of each selected Node in the cluster using NAT. Makes a Service accessible from outside the cluster using <NodeIP>:<NodePort>. Superset of ClusterIP.
+- LoadBalancer - Creates an external load balancer in the current cloud (if supported) and assigns a fixed, external IP to the Service. Superset of NodePort.
+- ExternalName - Exposes the Service using an arbitrary name (specified by externalName in the spec) by returning a CNAME record with the name. No proxy is used. This type requires v1.7 or higher of kube-dns.
+
+pod 的ip 地址只有在有Service 时，才能暴露给外部。Service 有4 种类型:
+- ClusterIP (default) - 只可以内部访问的Service
+- NodePort - 外部可以访问，node-ip:node-port
+- LoadBalancer - Creates an external load balancer in the current cloud (if supported) and assigns a fixed, external IP to the Service. Superset of NodePort.
+- ExternalName - Exposes the Service using an arbitrary name (specified by externalName in the spec) by returning a CNAME record with the name. No proxy is used. This type requires v1.7 or higher of kube-dns.

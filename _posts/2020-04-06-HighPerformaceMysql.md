@@ -1,4 +1,61 @@
-## 第四章知识点
+# 第三章
+
+- MySQL 5.1及更新的版本中，可以通过设置long_query_time为0来捕获所有的查询，而且查询的响应时间可以做到微秒级。
+- 慢查询日志是开销最低、精度最高的测量查询时间的工具。如果还在担心开启慢查询日志会带来额外的IO 开销，那大可放心。我们在IO 密集型的场景做过基准测试，慢查询日志带来的开销可以忽略不计。
+- 更需要担心的是日志可能消耗大量的磁盘空间。
+- **如果长期开启慢查询日志，注意要部署日志轮转(log rotation)工具。或者不要长期启用慢查询日志，只在需要收集的时候开启**
+- MySQL 还有另外一种查询日志，称为“通用日志”。
+- 不要直接打开整个慢查询日志进行分析，应该先从慢查询日志中生成剖析报告。生成剖析报告需要一个好工具。
+
+### MySQL 日志文件系统组成
+
+- 错误日志：记录启动、运行或停止mysqld时出现的问题。
+- 通用日志：记录建立的客户端连接和执行的语句。
+- 更新日志：记录更改数据的语句。该日志在MySQL 5.1中已不再使用。
+- 二进制日志：记录所有更改数据的语句。还用于复制。
+- 慢查询日志：记录所有执行时间超过long_query_time秒的所有查询或不使用索引的查询。
+- Innodb日志：innodb redo log
+
+### show profile
+
+做剖析(profiling)用的
+
+### show status
+
+- MySQL 的show status 命令会返回一些计数器。既有服务器级别的全局计数器，也有基于某个连接的会话级计数器。
+- 例如其中的Queries，在会话开始时为0，每提交一个查询增加1。
+- 如果执行`show global status`，则可以查看服务器级别的从服务器启动时开始计算的查询次数统计
+- `show status` 是一个有用的工具，但并不是一个剖析工具。`show status` 的大部分结果都只是一个计数器，可以显示某些活动如读索引的频繁程度，但无法给出消耗了多少时间
+- `show status` 结果中只有一条指的是操作的时间，（Innodb_row_lock_time），而且只能是全局级的，所以还是无法测量会话级的工作
+
+### show processlist
+
+- 通过不停地捕获`show processlist` 的输出，来观察是否有大量线程处于不正常的状态或者有其它不正常的特征。
+- 例如查询很少会长时间处于“statistics” 状态，这个状态一般是指导服务器在查询优化阶段如何确定表关联的顺序——通常是很快的
+- 使用`show processlist` 命令时，在尾部加上\G 可以垂直地方式输出结果，可以很方便的sort|uniq|sort 一类的命令来计算列值出现的次数
+- 线程处于查询执行的结束部分的状态，包括“freeing items”，“end”，“cleaning up” 和“logging show query”
+- 大量的线程处于“freeing items” 状态是出现了大量有问题查询的很明显的特征和指示
+- **一个很经典的例子是，很多查询处于“Locked” 的状态，这是MyISAM的一个典型问题，它的表级别锁定，在写请求较多时，可能迅速导致服务器级别的纯种堆积。**
+
+```sh
+cotilla@mng-39:/data1/cv-dockers/repl$ mysql -h10.111.1.50 -P3317 -u dev -psyn  -e 'show processlist \G;' | grep State| sort | uniq -c | sort -rn
+mysql: [Warning] Using a password on the command line interface can be insecure.
+   1127   State:
+      3   State: Master has sent all binlog to slave; waiting for more updates
+      1   State: starting
+      1   State: Waiting on empty queue
+```
+
+缺省情况下，所有日志创建于mysqld数据目录中。
+可以通过刷新日志，来强制mysqld来关闭和重新打开日志文件（或者在某些情况下切换到一个新的日志）。
+当你执行一个FLUSH LOGS语句或执行mysqladmin flush-logs或mysqladmin refresh时，则日志被老化。
+对于存在MySQL复制的情形下，从复制服务器将维护更多日志文件，被称为接替日志。
+
+### 使用查询日志
+
+- 如果要通过查询日志发现问题，需要开启慢查询日志并在全局级别设置`long_query_time` 为0。并且要确认所有的连接都采用了新的设置。这可能需要重置所有接连以使新的全局设置生效；或者使用Percona Server的一个特性，可以在不断开现有连接的情况下动态地使设置强制生效。
+
+# 第四章知识点
 
 ## 4.1 选择优化的数据类型
 
