@@ -12,6 +12,7 @@ stmt = stmt.where(tbl.c.rank.in_([GroupMembers.RANK_MEMBER, GroupMembers.RANK_AD
 
 stmt = tbl.select().where(or_(and_(tbl.c.group_id.in_(group_ids), tbl.c.kind == GroupMemberAI.KIND_APPLY),and_(tbl.c.user_id == user_id, tbl.c.kind == GroupMemberAI.KIND_INVITE))).order_by(tbl.c.created_at.desc()).offset(ops['start']).limit(ops['length'])
             
+stmt = stmt.where(or_(*[tbl.c.tags.like('%{}%'.format(i)) for i in user_tags]))
             
 stmt = tbl.count().where(tbl.c.user_id == user_id).where(tbl.c.recommended.in_([GroupZoneItem.RECOMMENDED_YES,GroupZoneItem.RECOMMENDED_DIGESTED])).where(tbl.c.updated_at > datetime.datetime.now().replace(hour=0, minute=0))
 
