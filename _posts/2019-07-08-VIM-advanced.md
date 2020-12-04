@@ -34,3 +34,4 @@
 34. `g/pattern/d` 删除包含特定字符的行 (全局删除匹配行) `1,5g/pattern/d` (删除第1-5行里的匹配行)
 35. `v/pattern/d` 删除不包含指定字符的行
 36. `g!/pattern/d` （全部删除）
+37. `:%g/pattern/norm @q` Run macro q on all lines in a file that match a pattern.
