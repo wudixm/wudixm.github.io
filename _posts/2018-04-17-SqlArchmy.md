@@ -11,7 +11,7 @@ stmt.where(tbl.c.rank >= GroupMembers.RANK_MEMBER)
 stmt = stmt.where(tbl.c.rank.in_([GroupMembers.RANK_MEMBER, GroupMembers.RANK_ADMIN]))
 
 stmt = tbl.select().where(or_(and_(tbl.c.group_id.in_(group_ids), tbl.c.kind == GroupMemberAI.KIND_APPLY),and_(tbl.c.user_id == user_id, tbl.c.kind == GroupMemberAI.KIND_INVITE))).order_by(tbl.c.created_at.desc()).offset(ops['start']).limit(ops['length'])
-            
+
 stmt = stmt.where(or_(*[tbl.c.tags.like('%{}%'.format(i)) for i in user_tags]))
             
 stmt = tbl.count().where(tbl.c.user_id == user_id).where(tbl.c.recommended.in_([GroupZoneItem.RECOMMENDED_YES,GroupZoneItem.RECOMMENDED_DIGESTED])).where(tbl.c.updated_at > datetime.datetime.now().replace(hour=0, minute=0))
@@ -133,3 +133,36 @@ stmt = tbl.update().where(tbl.c.id==34).values(vip_template=0).execute()
         tbl.delete().where(tbl.c.obj_kind == obj_kind).where(tbl.c.obj_id == obj_id).execute()
 ```
 
+
+### bind
+```
+from sqlalchemy import func, select, text
+
+sql3 = '''select id, user, count(user) as c from (select d.id, d.user, REPLACE( JSON_EXTRACT(d.properties, "$.group_id"), '\"', '') as gid from `cv_discount_users` d where d.created_at >"2021-01-05" and d.times = 1 and d.discount=23 order by d.user asc) b    group by user having c >1;'''
+obs = list(conn.execute(text(sql3)))
+```
+
+### order by <>
+
+```
+tbl = GroupActObs.get_tbl()
+stmt = tbl.select().where(tbl.c.province == province) \
+    .where(tbl.c.act_status.in_(GroupActObs.ACT_STATUS_DONE)) \
+    .order_by(tbl.c.province != province, tbl.c.rank.desc(), tbl.c.begin_time.desc())
+
+```
+
+### group_by 
+
+```python
+stmt = select([tbl.c.doing, func.count(tbl.c.id).label('count_1')]).group_by(tbl.c.doing)
+obs = list(stmt.execute())
+```
+
+### having
+
+```python
+tbl = UserFriend.get_tbl()
+stmt = select([tbl.c.friend_id, func.count(tbl.c.user_id).label('count_1')]).group_by(tbl.c.friend_id)
+stmt = stmt.having(stmt.c.count_1 >= 500).alias('daren')
+```

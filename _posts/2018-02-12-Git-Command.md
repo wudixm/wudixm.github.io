@@ -67,6 +67,11 @@ f13fa01 update
 ```
 
 `git log --oneline --decorate`：一行显示日志  glo
+`git log --oneline --since=2.months`：一行显示日志  glo
+`git log --oneline --since=2.weeks`：一行显示日志  glo
+`git log --oneline --since=2.days`：一行显示日志  glo
+`git log --oneline --since=2.years`：一行显示日志  glo
+
 
 `git commit --amend -m "Welcome To Facebook"`
 

@@ -35,3 +35,7 @@
 35. `v/pattern/d` 删除不包含指定字符的行
 36. `g!/pattern/d` （全部删除）
 37. `:%g/pattern/norm @q` Run macro q on all lines in a file that match a pattern.
+38. `ge` jumps to the end of the previous word.
+39. `gP` Pastes just like P but leave the cursor after the pasted text.
+40. `"xyy` Copies current line into register x.
+41. `:56,99>` Indent lines 56 through 99.
